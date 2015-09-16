@@ -68,7 +68,8 @@
             int heropowermana = p.ownHeroAblility.getManaCost(p);
             if (p.manaTurnEnd >= heropowermana && !useAbili && p.ownAbilityReady)
             {
-                if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
+                if (p.ownHeroName == HeroEnum.pala) retval -= 3;
+                else if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 5;
             }
             //if (usecoin && p.mana >= 1) retval -= 20;
 
@@ -78,6 +79,8 @@
                 retval += m.Angr * 2;
                 retval += m.handcard.card.rarity;
                 if (m.windfury) retval += m.Angr;
+                if (m.divineshild) retval += 1 + ((m.Hp+2) / 3);
+                if (m.stealth) retval += 1;
                 if (m.taunt) retval += 1;
                 if (!m.taunt && m.stealth && m.handcard.card.isSpecialMinion) retval += 20;
                 if (m.handcard.card.name == CardDB.cardName.silverhandrecruit && m.Angr == 1 && m.Hp == 1) retval -= 5;
