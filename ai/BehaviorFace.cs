@@ -49,7 +49,7 @@
             {
                 retval += p.owncarddraw * 5;
             }
-            retval += p.owncarddraw * 5;
+            //retval += p.owncarddraw * 5;
             retval -= p.enemycarddraw * 15;
 
             bool useAbili = false;
