@@ -2150,7 +2150,7 @@
                     // we give our weakest minion +3/+2 :D
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.Hp.CompareTo(b.Hp));//take the weakest
-                    if (temp.Count == 0) continue;
+                    if (temp.Count < 2) continue;
                     foreach (Minion m in temp)
                     {
                         minionGetBuffed(m, 3, 2);
