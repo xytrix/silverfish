@@ -77,7 +77,11 @@
             {
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.card.name == CardDB.cardName.avenge) retval -= 8;
+                    if (hc.card.name == CardDB.cardName.avenge)
+                    {
+                        retval -= 8;
+                        break;
+                    }
                 }
             }
 
