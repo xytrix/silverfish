@@ -87,7 +87,7 @@
                 retval += m.Angr * 2;
                 retval += m.handcard.card.rarity;
                 if (m.windfury) retval += m.Angr;
-                if (m.divineshild) retval += 1 + ((m.Hp+2) / 3);
+                if (m.divineshild) retval += ((m.Angr + 2) / 3) + ((m.Hp + 2) / 3);
                 if (m.stealth) retval += 1;
                 if (m.taunt) retval += 1;
                 if (!m.taunt && m.stealth && m.handcard.card.isSpecialMinion) retval += 20;
