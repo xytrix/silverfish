@@ -181,6 +181,7 @@
         public List<Minion> enemyMinions = new List<Minion>();
         public List<GraveYardItem> diedMinions = null;
         public int anzMinionsDiedThisTurn = 0;
+        public int numPlayerMinionsAtTurnStart = 0;  // used only for avenge
 
         public List<Handmanager.Handcard> owncards = new List<Handmanager.Handcard>();
         public int owncarddraw = 0;
@@ -2147,10 +2148,17 @@
 
                 if (secretID == CardDB.cardIDEnum.FP1_020) // avenge
                 {
+                    if (this.numPlayerMinionsAtTurnStart < 2) continue;
+
                     // we give our weakest minion +3/+2 :D
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.Hp.CompareTo(b.Hp));//take the weakest
-                    if (temp.Count < 2) continue;
+                    if (temp.Count == 0)
+                    {
+                        // even though there's no minions to buff because the board was cleared, we still got value for the secret
+                        this.evaluatePenality -= 8;
+                        continue;
+                    }
                     foreach (Minion m in temp)
                     {
                         minionGetBuffed(m, 3, 2);
@@ -4349,6 +4357,7 @@
                 }
                 else
                 {
+                    this.numPlayerMinionsAtTurnStart = this.ownMinions.Count;
                     int triggered = 0;
                     foreach (SecretItem si in this.enemySecretList)
                     {
