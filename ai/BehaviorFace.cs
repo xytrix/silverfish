@@ -27,7 +27,7 @@
             }
             else
             {
-                if (p.enemyHeroName != HeroEnum.mage && p.enemyHeroName != HeroEnum.priest)
+                if (p.enemyHeroName != HeroEnum.mage && p.enemyHeroName != HeroEnum.priest && p.enemyHeroName != HeroEnum.warlock)
                 {
                     retval += 11;
                 }
@@ -123,6 +123,8 @@
                 else
                 {
                     retval += 50;//10000
+                    if (p.numPlayerMinionsAtTurnStart == 0) retval += 50; // if we can kill the enemy even after a board clear, bigger bonus
+                    // TODO: if we have a silence effect (i.e for taunts), and enough mana to play it, and can still kill the enemy after a board clear... even bigger bonus!
                 }
             }
             //soulfire etc
