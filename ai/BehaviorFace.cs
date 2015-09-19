@@ -70,6 +70,7 @@
             {
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
             }
+            if (useAbili) retval -= 3;  // penalty in case the hero power was chosen over playing a card (penalty == card count bonus)
             //if (usecoin && p.mana >= 1) retval -= 20;
 
             if (p.ownHeroName == HeroEnum.pala)
@@ -94,7 +95,7 @@
                 if (m.stealth) retval += 1;
                 if (m.taunt) retval += 1;
                 if (!m.taunt && m.stealth && m.handcard.card.isSpecialMinion) retval += 20;
-                if (m.handcard.card.name == CardDB.cardName.silverhandrecruit && m.Angr == 1 && m.Hp == 1) retval -= 5;
+                //if (m.handcard.card.name == CardDB.cardName.silverhandrecruit && m.Angr == 1 && m.Hp == 1) retval -= 5;
                 if (m.handcard.card.name == CardDB.cardName.direwolfalpha || m.handcard.card.name == CardDB.cardName.flametonguetotem || m.handcard.card.name == CardDB.cardName.stormwindchampion || m.handcard.card.name == CardDB.cardName.raidleader) retval += 10;
                 if (m.handcard.card.name == CardDB.cardName.nerubianegg)
                 {
