@@ -72,11 +72,11 @@
             }
             //if (usecoin && p.mana >= 1) retval -= 20;
 
-            if (p.ownHeroName == HeroEnum.pala && p.manaTurnEnd >= 1)
+            if (p.ownHeroName == HeroEnum.pala)
             {
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.card.name == CardDB.cardName.avenge)
+                    if (hc.card.name == CardDB.cardName.avenge && p.manaTurnEnd >= hc.manacost)
                     {
                         retval -= 8;
                         break;
