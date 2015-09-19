@@ -4315,6 +4315,8 @@
 
         public void triggerStartTurn(bool ownturn)
         {
+            this.numPlayerMinionsAtTurnStart = this.ownMinions.Count;
+
             if (ownturn)
             {
                 int at073 = 0;
@@ -4357,7 +4359,6 @@
                 }
                 else
                 {
-                    this.numPlayerMinionsAtTurnStart = this.ownMinions.Count;
                     int triggered = 0;
                     foreach (SecretItem si in this.enemySecretList)
                     {
@@ -5310,7 +5311,7 @@
             {
                 if (this.ownWeaponDurability >= 1)
                 {
-                    this.lostWeaponDamage += this.ownWeaponDurability * this.ownWeaponAttack * this.ownWeaponAttack;
+                    this.lostWeaponDamage += this.ownWeaponDurability * this.ownWeaponAttack;
                     this.lowerWeaponDurability(1000, true);
                     hero.Angr -= this.ownWeaponAttack;
                 }
