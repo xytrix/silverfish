@@ -893,8 +893,15 @@
             bool hasgadget = false;
             bool hasstarving = false;
             bool hasknife = false;
+            bool hasflamewaker = false;
+            bool hasmech = false;
+
             foreach (Minion mnn in p.ownMinions)
             {
+                if (mnn.handcard.card.race == TAG_RACE.MECHANICAL) hasmech = true;
+
+                if (mnn.silenced) continue;
+
                 if (mnn.name == CardDB.cardName.gadgetzanauctioneer)
                 {
                     hasgadget = true;
@@ -909,31 +916,53 @@
                 {
                     hasknife = true;
                 }
+
+                if (mnn.name == CardDB.cardName.flamewaker)
+                {
+                    hasflamewaker = true;
+                }
             }
 
-            if (!this.randomEffects.ContainsKey(card.name) && !this.cardDrawBattleCryDatabase.ContainsKey(card.name) && !(hasknife && card.type == CardDB.cardtype.MOB) && !(hasgadget && card.type == CardDB.cardtype.SPELL) && !(hasstarving && (TAG_RACE)card.race == TAG_RACE.PET))
+            if (!this.randomEffects.ContainsKey(card.name) 
+                && !this.cardDrawBattleCryDatabase.ContainsKey(card.name) 
+                && !(hasknife && card.type == CardDB.cardtype.MOB && p.enemyMinions.Count > 0) 
+                && !(hasgadget && card.type == CardDB.cardtype.SPELL)
+                && !(hasflamewaker && card.type == CardDB.cardtype.SPELL && p.enemyMinions.Count > 0)
+                && !(hasstarving && (TAG_RACE)card.race == TAG_RACE.PET))
             {
                 return 0;
             }
 
-            if (card.name == CardDB.cardName.brawl)
+            // Don't penalize for cases that don't actually have random outcomes
+            // TODO: Add Lightning Storm + Elemental Destruction if all enemies hp < the minimum damage?
+
+            if (card.name == CardDB.cardName.brawl  // special case?
+                || (card.name == CardDB.cardName.bouncingblade && ((p.enemyMinions.Count + p.ownMinions.Count) == 1))
+                || (card.name == CardDB.cardName.goblinblastmage && !hasmech)
+                || (card.name == CardDB.cardName.coghammer && p.ownMinions.Count == 1))
             {
                 return 0;
             }
 
-            if ((card.name == CardDB.cardName.cleave || card.name == CardDB.cardName.multishot)
-                && p.enemyMinions.Count == 2)
+            if (p.enemyMinions.Count == 2 && (card.name == CardDB.cardName.cleave
+                || card.name == CardDB.cardName.multishot
+                || card.name == CardDB.cardName.forkedlightning
+                || card.name == CardDB.cardName.darkbargain))
             {
                 return 0;
             }
 
-            if ((card.name == CardDB.cardName.deadlyshot) && p.enemyMinions.Count == 1)
+            if (p.enemyMinions.Count == 1 && (card.name == CardDB.cardName.deadlyshot
+                || card.name == CardDB.cardName.flamecannon
+                || card.name == CardDB.cardName.bomblobber))
             {
                 return 0;
             }
 
-            if ((card.name == CardDB.cardName.arcanemissiles || card.name == CardDB.cardName.avengingwrath)
-                && p.enemyMinions.Count == 0)
+            if (p.enemyMinions.Count == 0 && (card.name == CardDB.cardName.arcanemissiles 
+                || card.name == CardDB.cardName.avengingwrath 
+                || card.name == CardDB.cardName.goblinblastmage
+                || card.name == CardDB.cardName.flamejuggler))
             {
                 return 0;
             }
@@ -941,7 +970,7 @@
             int cards = 0;
             cards = this.randomEffects.ContainsKey(card.name) ? this.randomEffects[card.name] : (this.cardDrawBattleCryDatabase.ContainsKey(card.name) ? this.cardDrawBattleCryDatabase[card.name] : 0);
 
-            foreach (Action a in p.playactions)
+            foreach (Action a in p.playactions)  // penalize for any non-random actions taken before playing this random one
             {
                 if (first == false) break;
                 if (a.actionType == actionEnum.attackWithHero)
@@ -964,11 +993,6 @@
 
                 if (a.actionType == actionEnum.playcard)
                 {
-                    if (card.name == CardDB.cardName.knifejuggler && card.type == CardDB.cardtype.MOB)
-                    {
-                        continue;
-                    }
-
                     if (this.cardDrawBattleCryDatabase.ContainsKey(a.card.card.name))
                     {
                         continue;
@@ -979,19 +1003,31 @@
                         continue;
                     }
 
-                    if (hasgadget && card.type == CardDB.cardtype.SPELL)
+                    // no penalty for spells or other cards that obtain bonuses from playing spells
+                    if ((hasgadget || hasflamewaker) && (a.card.card.type == CardDB.cardtype.SPELL
+                        || a.card.card.name == CardDB.cardName.gadgetzanauctioneer || a.card.card.name == CardDB.cardName.flamewaker
+                        || a.card.card.name == CardDB.cardName.manawyrm || a.card.card.name == CardDB.cardName.manaaddict
+                        || a.card.card.name == CardDB.cardName.questingadventurer || a.card.card.name == CardDB.cardName.wildpyromancer
+                        || a.card.card.name == CardDB.cardName.violetteacher || a.card.card.name == CardDB.cardName.archmageantonidas))
                     {
                         continue;
                     }
 
-                    if (hasstarving && (TAG_RACE)card.race == TAG_RACE.PET)
+                    if (hasstarving && ((TAG_RACE)a.card.card.race == TAG_RACE.PET))
                     {
                         continue;
                     }
 
-                    if (hasknife && card.type == CardDB.cardtype.MOB)
+                    if (hasknife && (a.card.card.type == CardDB.cardtype.MOB || a.card.card.name == CardDB.cardName.swordofjustice))
                     {
-                        continue;
+                        if (a.card.card.type == CardDB.cardtype.MOB && card.name == CardDB.cardName.knifejuggler)
+                        {
+                            first = false;   // penalize playing 2nd knife juggler after other mobs
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
 
                     first = false;
@@ -3134,8 +3170,6 @@
             this.randomEffects.Add(CardDB.cardName.flamejuggler, 1);
             this.randomEffects.Add(CardDB.cardName.grandcrusader, 1);
             this.randomEffects.Add(CardDB.cardName.spellslinger, 1);
-
-            this.randomEffects.Add(CardDB.cardName.flamewaker, 10); //its not random, but we do it :D, for randomspells
         }
 
         private void setupTargetAbilitys()
