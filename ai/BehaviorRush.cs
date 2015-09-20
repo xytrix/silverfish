@@ -65,7 +65,7 @@
             }
             if (usecoin && useAbili && p.ownMaxMana <= 2) retval -= 40;
             if (usecoin) retval -= 5 * p.manaTurnEnd;
-            int heropowermana = p.ownHeroAblility.getManaCost(p);
+            int heropowermana = p.ownHeroAblility.card.getManaCost(p, 2);
             if (p.manaTurnEnd >= heropowermana && !useAbili && p.ownAbilityReady)
             {
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
