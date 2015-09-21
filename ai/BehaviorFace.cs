@@ -16,7 +16,7 @@
 
             retval += p.ownMaxMana * 15 - p.enemyMaxMana * 15;
 
-            if (p.ownWeaponAttack >= 1)
+            if (p.ownWeaponAttack >= 1 && !p.ownHero.frozen)
             {
                 retval += p.ownWeaponAttack * p.ownWeaponDurability;
             }
@@ -94,7 +94,11 @@
                 if (m.divineshild) retval += ((m.Angr + 2) / 3) + ((m.Hp + 2) / 3);
                 if (m.stealth) retval += 1;
                 if (m.taunt) retval += 1;
-                if (!m.taunt && m.stealth && m.handcard.card.isSpecialMinion) retval += 20;
+                if (m.handcard.card.isSpecialMinion)
+                {
+                    retval += 1;
+                    if (!m.taunt && m.stealth) retval += (m.Angr < 4 ? 10 : 20);
+                }
                 //if (m.handcard.card.name == CardDB.cardName.silverhandrecruit && m.Angr == 1 && m.Hp == 1) retval -= 5;
                 if (m.handcard.card.name == CardDB.cardName.direwolfalpha || m.handcard.card.name == CardDB.cardName.flametonguetotem || m.handcard.card.name == CardDB.cardName.stormwindchampion || m.handcard.card.name == CardDB.cardName.raidleader) retval += 10;
                 if (m.handcard.card.name == CardDB.cardName.nerubianegg)
