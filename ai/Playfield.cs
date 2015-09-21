@@ -2341,6 +2341,7 @@
 
                 this.weHavePlayedMillhouseManastorm = false;
                 this.ownloatheb = 0;
+                this.ownSaboteur = 0;
                 
                 this.owncarddraw = 0;//todo: realy?
                 this.sEnemTurn = false;
@@ -2380,7 +2381,8 @@
 
                 this.enemyHavePlayedMillhouseManastorm = false;
                 this.enemyloatheb = 0;
-                
+                this.enemySaboteur = 0;
+
                 this.playedPreparation = false;
                 this.playedmagierinderkirintor = false;
 
@@ -3062,6 +3064,7 @@
             
             this.evaluatePenality += penality;
             this.mana = this.mana - cost;
+            this.anzOwnFencingCoach = 0;
 
             //Helpfunctions.Instance.logg("play crd " + c.name + " entitiy# " + cardEntity + " mana " + hc.getManaCost(this) + " trgt " + target);
             if (logging) Helpfunctions.Instance.logg("play crd " + c.name + " trgt " + target);

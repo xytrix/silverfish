@@ -1384,6 +1384,20 @@ namespace HREngine.Bots
 
             //will not work in Hearthranger!
 
+            this.enemyMillhouse = 0;
+            this.enemyLoathebs = 0;
+            this.ownDragonConsort = 0;
+            this.ownKirintor = 0;
+            this.ownPrepa = 0;
+            this.lockandload = 0;
+            this.enemysabo = 0;
+            this.ownFenciCoaches = 0;
+            this.ownMillhouse = 0;
+            this.ownLoathebs = 0;
+            this.enemyDragonConsort = 0;
+            this.enemyKirintor = 0;
+            this.enemyPrepa = 0;
+            this.ownsabo = 0;
 
             foreach (Entity ent in allEntitys.Values)
             {
