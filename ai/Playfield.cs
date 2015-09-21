@@ -2075,9 +2075,16 @@
 
                 if (secretID == CardDB.cardIDEnum.EX1_294) //mirror entity
                 {
-                    //summon snake ( a weak minion)
+                    // summon a weak minion
                     int posi = this.ownMinions.Count;
-                    CardDB.Card kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.EX1_554t);//snake
+                    CardDB.Card kid;
+                    switch ((this.ownMaxMana + 2) / 3)  // conservative, but scales a little as the game progresses
+                    {
+                        case 1: default:  kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.EX1_554t); break;  // 1/1 snake turns 1-3
+                        case 2: kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.EX1_158t); break; // 2/2 treant turns 4-6
+                        case 3: kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.CS2_172); break; // 3/2 bloodfen raptor turns 7-9
+                        case 4: kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.AT_036t); break; // 4/4 nerubian turn 10
+                    }
                     callKid(kid, posi, true);
                 }
                 if (secretID == CardDB.cardIDEnum.tt_010) //spellbender
