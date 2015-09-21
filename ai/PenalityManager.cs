@@ -1684,12 +1684,7 @@
 
             if (name == CardDB.cardName.frostbolt)
             {
-                if (!target.own && !target.isHero)
-                {
-                    if (m.handcard.card.cost <= 2)
-                        return 15;
-                }
-                return 15;
+                return 8;
             }
 
             if (!lethal && choice == 1 && name == CardDB.cardName.druidoftheclaw)
@@ -2361,7 +2356,7 @@
             DamageTargetDatabase.Add(CardDB.cardName.fireball, 6);
             DamageTargetDatabase.Add(CardDB.cardName.fireblast, 1);
             DamageTargetDatabase.Add(CardDB.cardName.frostshock, 1);
-            DamageTargetDatabase.Add(CardDB.cardName.frostbolt, 1);
+            DamageTargetDatabase.Add(CardDB.cardName.frostbolt, 3);
             DamageTargetDatabase.Add(CardDB.cardName.hoggersmash, 4);
             DamageTargetDatabase.Add(CardDB.cardName.holyfire, 5);
             DamageTargetDatabase.Add(CardDB.cardName.holysmite, 2);
@@ -2723,6 +2718,40 @@
             this.specialMinions.Add(CardDB.cardName.anubarambusher, 0);
             this.specialMinions.Add(CardDB.cardName.webspinner, 0);
 
+            //GVG
+            this.specialMinions.Add(CardDB.cardName.snowchugger, 0);
+            this.specialMinions.Add(CardDB.cardName.mechwarper, 0);
+            this.specialMinions.Add(CardDB.cardName.cogmaster, 0);
+            this.specialMinions.Add(CardDB.cardName.mistressofpain, 0);
+            this.specialMinions.Add(CardDB.cardName.felcannon, 0);
+            this.specialMinions.Add(CardDB.cardName.malganis, 0);
+            this.specialMinions.Add(CardDB.cardName.ironsensei, 0);
+            this.specialMinions.Add(CardDB.cardName.tradeprincegallywix, 0);
+            this.specialMinions.Add(CardDB.cardName.mechbearcat, 0);
+            this.specialMinions.Add(CardDB.cardName.vitalitytotem, 0);
+            this.specialMinions.Add(CardDB.cardName.siltfinspiritwalker, 0);
+            this.specialMinions.Add(CardDB.cardName.gahzrilla, 0);
+            this.specialMinions.Add(CardDB.cardName.warbot, 0);
+            this.specialMinions.Add(CardDB.cardName.cobaltguardian, 0);
+            this.specialMinions.Add(CardDB.cardName.stonesplintertrogg, 0);
+            this.specialMinions.Add(CardDB.cardName.burlyrockjawtrogg, 0);
+            this.specialMinions.Add(CardDB.cardName.shadowboxer, 0);
+            this.specialMinions.Add(CardDB.cardName.shipscannon, 0);
+            this.specialMinions.Add(CardDB.cardName.steamwheedlesniper, 0);
+            this.specialMinions.Add(CardDB.cardName.jeeves, 0);
+            this.specialMinions.Add(CardDB.cardName.goblinsapper, 0);
+            this.specialMinions.Add(CardDB.cardName.floatingwatcher, 0);
+            this.specialMinions.Add(CardDB.cardName.micromachine, 0);
+            this.specialMinions.Add(CardDB.cardName.hobgoblin, 0);
+            this.specialMinions.Add(CardDB.cardName.junkbot, 0);
+            this.specialMinions.Add(CardDB.cardName.mimironshead, 0);
+            this.specialMinions.Add(CardDB.cardName.mogortheogre, 0);
+            this.specialMinions.Add(CardDB.cardName.foereaper4000, 0);
+            this.specialMinions.Add(CardDB.cardName.mekgineerthermaplugg, 0);
+            this.specialMinions.Add(CardDB.cardName.gazlowe, 0);
+            this.specialMinions.Add(CardDB.cardName.troggzortheearthinator, 0);
+
+            //BRM
             this.specialMinions.Add(CardDB.cardName.emperorthaurissan, 0);
             this.specialMinions.Add(CardDB.cardName.majordomoexecutus, 0);
             this.specialMinions.Add(CardDB.cardName.chromaggus, 0);
@@ -2820,110 +2849,105 @@
 
         private void setupEnemyTargetPriority()
         {
-            priorityTargets.Add(CardDB.cardName.angrychicken, 10);
-            priorityTargets.Add(CardDB.cardName.lightwarden, 10);
-            priorityTargets.Add(CardDB.cardName.secretkeeper, 10);
-            priorityTargets.Add(CardDB.cardName.youngdragonhawk, 10);
-            priorityTargets.Add(CardDB.cardName.bloodmagethalnos, 10);
-            priorityTargets.Add(CardDB.cardName.direwolfalpha, 10);
+            //priorityTargets.Add(CardDB.cardName.angrychicken, 1);
+            priorityTargets.Add(CardDB.cardName.lightwarden, 4);
+            priorityTargets.Add(CardDB.cardName.secretkeeper, 3);
+            priorityTargets.Add(CardDB.cardName.youngdragonhawk, 1);
+            priorityTargets.Add(CardDB.cardName.bloodmagethalnos, 3);
+            priorityTargets.Add(CardDB.cardName.direwolfalpha, 3);
             priorityTargets.Add(CardDB.cardName.doomsayer, 10);
-            priorityTargets.Add(CardDB.cardName.knifejuggler, 10);
-            priorityTargets.Add(CardDB.cardName.koboldgeomancer, 10);
-            priorityTargets.Add(CardDB.cardName.manaaddict, 10);
-            priorityTargets.Add(CardDB.cardName.masterswordsmith, 10);
+            priorityTargets.Add(CardDB.cardName.knifejuggler, 5);
+            priorityTargets.Add(CardDB.cardName.koboldgeomancer, 3);
+            priorityTargets.Add(CardDB.cardName.manaaddict, 2);
+            priorityTargets.Add(CardDB.cardName.masterswordsmith, 3);
             priorityTargets.Add(CardDB.cardName.natpagle, 10);
-            priorityTargets.Add(CardDB.cardName.murloctidehunter, 10);
-            priorityTargets.Add(CardDB.cardName.pintsizedsummoner, 10);
-            priorityTargets.Add(CardDB.cardName.wildpyromancer, 10);
+            priorityTargets.Add(CardDB.cardName.murloctidehunter, 5);
+            priorityTargets.Add(CardDB.cardName.pintsizedsummoner, 3);
+            priorityTargets.Add(CardDB.cardName.wildpyromancer, 3);
             priorityTargets.Add(CardDB.cardName.alarmobot, 10);
-            priorityTargets.Add(CardDB.cardName.acolyteofpain, 10);
-            priorityTargets.Add(CardDB.cardName.demolisher, 10);
-            priorityTargets.Add(CardDB.cardName.flesheatingghoul, 10);
-            priorityTargets.Add(CardDB.cardName.impmaster, 10);
-            priorityTargets.Add(CardDB.cardName.questingadventurer, 10);
-            priorityTargets.Add(CardDB.cardName.raidleader, 10);
-            priorityTargets.Add(CardDB.cardName.thrallmarfarseer, 10);
-            priorityTargets.Add(CardDB.cardName.cultmaster, 10);
-            priorityTargets.Add(CardDB.cardName.leeroyjenkins, 10);
-            priorityTargets.Add(CardDB.cardName.violetteacher, 10);
-            priorityTargets.Add(CardDB.cardName.gadgetzanauctioneer, 10);
-            priorityTargets.Add(CardDB.cardName.hogger, 10);
-            priorityTargets.Add(CardDB.cardName.illidanstormrage, 10);
-            priorityTargets.Add(CardDB.cardName.barongeddon, 10);
+            priorityTargets.Add(CardDB.cardName.acolyteofpain, 5);
+            priorityTargets.Add(CardDB.cardName.demolisher, 3);
+            priorityTargets.Add(CardDB.cardName.flesheatingghoul, 3);
+            priorityTargets.Add(CardDB.cardName.impmaster, 3);
+            priorityTargets.Add(CardDB.cardName.questingadventurer, 3);
+            priorityTargets.Add(CardDB.cardName.raidleader, 3);
+            priorityTargets.Add(CardDB.cardName.thrallmarfarseer, 3);
+            priorityTargets.Add(CardDB.cardName.cultmaster, 5);
+            priorityTargets.Add(CardDB.cardName.leeroyjenkins, 3);
+            priorityTargets.Add(CardDB.cardName.violetteacher, 3);
+            priorityTargets.Add(CardDB.cardName.gadgetzanauctioneer, 5);
+            priorityTargets.Add(CardDB.cardName.hogger, 5);
+            priorityTargets.Add(CardDB.cardName.illidanstormrage, 5);
+            priorityTargets.Add(CardDB.cardName.barongeddon, 5);
             priorityTargets.Add(CardDB.cardName.stormwindchampion, 10);
-            priorityTargets.Add(CardDB.cardName.gurubashiberserker, 10);
+            priorityTargets.Add(CardDB.cardName.gurubashiberserker, 5);
 
             //warrior cards
             priorityTargets.Add(CardDB.cardName.frothingberserker, 10);
             priorityTargets.Add(CardDB.cardName.warsongcommander, 10);
 
             //warlock cards
-            priorityTargets.Add(CardDB.cardName.summoningportal, 10);
+            priorityTargets.Add(CardDB.cardName.summoningportal, 3);
 
             //shaman cards
-            priorityTargets.Add(CardDB.cardName.dustdevil, 10);
+            priorityTargets.Add(CardDB.cardName.dustdevil, 3);
             priorityTargets.Add(CardDB.cardName.wrathofairtotem, 1);
             priorityTargets.Add(CardDB.cardName.flametonguetotem, 10);
             priorityTargets.Add(CardDB.cardName.manatidetotem, 10);
-            priorityTargets.Add(CardDB.cardName.unboundelemental, 10);
+            priorityTargets.Add(CardDB.cardName.unboundelemental, 3);
 
             //rogue cards
 
             //priest cards
             priorityTargets.Add(CardDB.cardName.northshirecleric, 10);
             priorityTargets.Add(CardDB.cardName.lightwell, 10);
-            priorityTargets.Add(CardDB.cardName.auchenaisoulpriest, 10);
+            priorityTargets.Add(CardDB.cardName.auchenaisoulpriest, 5);
             priorityTargets.Add(CardDB.cardName.prophetvelen, 10);
 
             //paladin cards
 
             //mage cards
-            priorityTargets.Add(CardDB.cardName.manawyrm, 10);
-            priorityTargets.Add(CardDB.cardName.sorcerersapprentice, 10);
-            priorityTargets.Add(CardDB.cardName.etherealarcanist, 10);
+            priorityTargets.Add(CardDB.cardName.manawyrm, 3);
+            priorityTargets.Add(CardDB.cardName.sorcerersapprentice, 3);
+            priorityTargets.Add(CardDB.cardName.etherealarcanist, 5);
             priorityTargets.Add(CardDB.cardName.archmageantonidas, 10);
 
             //hunter cards
-            priorityTargets.Add(CardDB.cardName.timberwolf, 10);
+            priorityTargets.Add(CardDB.cardName.timberwolf, 3);
             priorityTargets.Add(CardDB.cardName.scavenginghyena, 10);
             priorityTargets.Add(CardDB.cardName.starvingbuzzard, 10);
-            priorityTargets.Add(CardDB.cardName.leokk, 10);
+            priorityTargets.Add(CardDB.cardName.leokk, 5);
             priorityTargets.Add(CardDB.cardName.tundrarhino, 10);
 
             //naxx cards
             priorityTargets.Add(CardDB.cardName.baronrivendare, 10);
             priorityTargets.Add(CardDB.cardName.kelthuzad, 10);
-            priorityTargets.Add(CardDB.cardName.nerubarweblord, 10);
+            priorityTargets.Add(CardDB.cardName.nerubarweblord, 5);
             priorityTargets.Add(CardDB.cardName.shadeofnaxxramas, 10);
-            priorityTargets.Add(CardDB.cardName.undertaker, 10);
+            priorityTargets.Add(CardDB.cardName.undertaker, 3);
 
 
             this.priorityTargets.Add(CardDB.cardName.flamewaker, 5);
             this.priorityTargets.Add(CardDB.cardName.impgangboss, 5);
             this.priorityTargets.Add(CardDB.cardName.grimpatron, 10);
-            this.priorityTargets.Add(CardDB.cardName.dragonkinsorcerer, 10);
+            this.priorityTargets.Add(CardDB.cardName.dragonkinsorcerer, 5);
             this.priorityTargets.Add(CardDB.cardName.emperorthaurissan, 10);
             this.priorityTargets.Add(CardDB.cardName.chromaggus, 10);
 
-
-            this.priorityTargets.Add(CardDB.cardName.quartermaster, 5);
-
             //TGT
-            this.priorityTargets.Add(CardDB.cardName.muklaschampion, 5);
+            this.priorityTargets.Add(CardDB.cardName.muklaschampion, 10);
             this.priorityTargets.Add(CardDB.cardName.kodorider, 5);
             this.priorityTargets.Add(CardDB.cardName.eydisdarkbane, 5);
             this.priorityTargets.Add(CardDB.cardName.nexuschampionsaraad, 5);
-            this.priorityTargets.Add(CardDB.cardName.savagecombatant, 5);
-            this.priorityTargets.Add(CardDB.cardName.aviana, 5);
+            this.priorityTargets.Add(CardDB.cardName.savagecombatant, 10);
+            this.priorityTargets.Add(CardDB.cardName.aviana, 10);
             this.priorityTargets.Add(CardDB.cardName.acidmaw, 5);
 
             this.priorityTargets.Add(CardDB.cardName.coldarradrake, 5);
             this.priorityTargets.Add(CardDB.cardName.warhorsetrainer, 5);
             this.priorityTargets.Add(CardDB.cardName.murlocknight, 5);
             this.priorityTargets.Add(CardDB.cardName.holychampion, 5);
-            this.priorityTargets.Add(CardDB.cardName.wilfredfizzlebang, 5);
-
-
+            this.priorityTargets.Add(CardDB.cardName.wilfredfizzlebang, 10);
         }
 
         private void setupLethalHelpMinions()
