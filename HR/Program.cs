@@ -470,8 +470,7 @@ namespace HREngine.Bots
             }
             catch (Exception Exception)
             {
-                Helpfunctions.Instance.ErrorLog(Exception.Message);
-                Helpfunctions.Instance.ErrorLog(Environment.StackTrace);
+                Helpfunctions.Instance.ErrorLog(Exception.ToString());
                 if (Settings.Instance.learnmode)
                 {
                     e.action_list.Clear();
@@ -1990,7 +1989,7 @@ namespace HREngine.Bots
 
             }
             this.waitingForSilver = false;
-            Helpfunctions.Instance.logg("received " + boardnumm + " actions to do:");
+            Helpfunctions.Instance.logg("received " + boardnumm + " actions to do: (currtime = " + DateTime.Now.ToString("HH:mm:ss.ffff") + ")");
             Ai.Instance.currentCalculatedBoard = "0";
             Playfield p = new Playfield();
             List<Action> aclist = new List<Action>();

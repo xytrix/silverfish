@@ -38,6 +38,8 @@
         //TODO: graveyard change (list <card,owner>)
         //Todo: vanish clear all auras/buffs (NEW1_004)
 
+        private static int instanceId = 0;
+        public int id = 0;  // for easier debugging
         public bool logging = false;
         public bool complete = false;
 
@@ -268,6 +270,7 @@
 
         public Playfield()
         {
+            this.id = ++instanceId;
             this.nextEntity = 1000;
             //this.simulateEnemyTurn = Ai.Instance.simulateEnemyTurn;
             this.ownController = Hrtprozis.Instance.getOwnController();
@@ -623,6 +626,7 @@
 
         public Playfield(Playfield p)
         {
+            this.id = ++instanceId;
             this.isServer = p.isServer;
             this.nextEntity = p.nextEntity;
 
@@ -6076,7 +6080,7 @@
         public void printBoard()
         {
             float copy = value;
-            Helpfunctions.Instance.logg("board: " + value + " ++++++++++++++++++++++");
+            Helpfunctions.Instance.logg("board: " + value + " id: " + this.id + "++++++++++++++++++++++");
             Helpfunctions.Instance.logg("pen " + this.evaluatePenality);
             Helpfunctions.Instance.logg("mana " + this.mana + "/" + this.ownMaxMana + " turnEndMana " + this.manaTurnEnd);
             Helpfunctions.Instance.logg("cardsplayed: " + this.cardsPlayedThisTurn + " handsize: " + this.owncards.Count + " eh " + this.enemyAnzCards + " " + this.enemycarddraw);
