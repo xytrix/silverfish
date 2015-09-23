@@ -1525,7 +1525,7 @@
                 {
                     return 50;
                 }
-                if (target.Angr >= 5 || target.handcard.card.cost >= 5 || (target.handcard.card.rarity == 5 || target.handcard.card.cost >= 3))
+                if (target.Angr >= 5 || target.handcard.card.cost >= 5 || (target.handcard.card.rarity == 5 && target.handcard.card.cost >= 3))
                 {
                     return 0;
                 }
@@ -1804,6 +1804,8 @@
             {
                 if (target.own && !target.isHero && !m.Ready)
                 {
+                    if (target.name == CardDB.cardName.voidcaller) return 50;
+                    if (target.name == CardDB.cardName.sylvanaswindrunner) return 100;
                     return 500;
                 }
             }
