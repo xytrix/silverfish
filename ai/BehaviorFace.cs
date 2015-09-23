@@ -165,8 +165,8 @@
                 retval += m.handcard.card.rarity;
 
                 
-                if (m.Angr >= 4) retval += 20;
-                if (m.Angr >= 7) retval += 50;
+                if (!m.frozen && m.Angr >= 4) retval += 20 + m.Hp;
+                if (!m.frozen && m.Angr >= 7) retval += 50 + m.Hp;
                 if (m.name == CardDB.cardName.nerubianegg && m.Angr <= 3 && !m.taunt) retval = 0;
             }
 
