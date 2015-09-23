@@ -2147,12 +2147,18 @@
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.Hp.CompareTo(b.Hp));//take the weakest
                     if (temp.Count == 0) continue;
+
+                    bool buffed = false;
                     foreach (Minion m in temp)
                     {
                         if (m.divineshild) continue;
                         m.divineshild = true;
+                        buffed = true;
                         break;
                     }
+
+                    // all our minions have divine shield? redemption really shines here, so give weakest minion more hp.
+                    if (!buffed) temp[0].Hp += temp[0].handcard.card.Health;  // don't count already buffed hp
                 }
 
                 if (secretID == CardDB.cardIDEnum.EX1_379) // repentance
@@ -5040,7 +5046,8 @@
 
                         if ((!m.silenced && (m.handcard.card.name == CardDB.cardName.cairnebloodhoof || m.handcard.card.name == CardDB.cardName.harvestgolem)) || m.ancestralspirit >= 1)
                         {
-                            this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
+                            // may be peforming actions without a botbase (i.e. run external)
+                            if (Ai.Instance.botBase != null) this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
                         }
                     }
                     else
@@ -5766,7 +5773,8 @@
             int ancestral = m.ancestralspirit;
             if (m.handcard.card.name == CardDB.cardName.cairnebloodhoof || m.handcard.card.name == CardDB.cardName.harvestgolem || ancestral >= 1)
             {
-                this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
+                // may be peforming actions without a botbase (i.e. run external)
+                if (Ai.Instance.botBase != null) this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
             }
 
             //necessary???
