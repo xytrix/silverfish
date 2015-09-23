@@ -2110,6 +2110,17 @@
                     drawACard(m.handcard.card.cardIDenum, true);
                     drawACard(m.handcard.card.cardIDenum, true);
                 }
+                if (secretID == CardDB.cardIDEnum.AT_002) // effigy
+                {
+                    if (this.ownMinions.Count == 0) continue;
+
+                    // assume enemy kills our lowest mana cost minion
+                    List<Minion> temp = new List<Minion>(this.ownMinions);
+                    temp.Sort((a, b) => a.handcard.card.cost.CompareTo(b.handcard.card.cost));
+                    
+                    int cardCost = Math.Min(8, temp[0].handcard.card.cost);  // cap card cost at 8 for giants, etc
+                    this.evaluatePenality -= cardCost * 3;  // value as if we played a vanilla minion of the same cost (i.e. 2*atk + hp)
+                }
 
                 //pala secrets############
                 if (secretID == CardDB.cardIDEnum.EX1_132) // eye for an eye
