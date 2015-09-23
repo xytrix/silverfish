@@ -165,7 +165,7 @@
             CardDB.cardName name = card.name;
             //there is no reason to buff HP of minon (because it is not healed)
 
-            int abuff = getAttackBuffPenality(card, target, p, choice, lethal);
+            int abuff = getAttackBuffPenality(hcard, target, p, choice, lethal);
             int tbuff = getTauntBuffPenality(name, target, p, choice);
             if (name == CardDB.cardName.markofthewild && ((abuff >= 500 && tbuff == 0) || (abuff == 0 && tbuff >= 500)))
             {
@@ -204,12 +204,11 @@
             return retval;
         }
 
-        private int getAttackBuffPenality(CardDB.Card card, Minion target, Playfield p, int choice, bool lethal)
+        private int getAttackBuffPenality(Handmanager.Handcard playhc, Minion target, Playfield p, int choice, bool lethal)
         {
+            CardDB.Card card = playhc.card;
             CardDB.cardName name = card.name;
             if (name == CardDB.cardName.darkwispers && choice != 1) return 0;
-            int pen = 0;
-            //buff enemy?
 
             if (!lethal && (card.name == CardDB.cardName.savageroar || card.name == CardDB.cardName.bloodlust))
             {
@@ -242,8 +241,8 @@
                 //allow it if you have biggamehunter
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.card.name == CardDB.cardName.biggamehunter && target.Angr <= 6) return 5;
-                    if (hc.card.name == CardDB.cardName.shadowworddeath && target.Angr <= 4) return 5;
+                    if (hc.card.name == CardDB.cardName.biggamehunter && target.Angr <= 6 && p.mana >= (hc.getManaCost(p) + playhc.getManaCost(p))) return 5;
+                    if (hc.card.name == CardDB.cardName.shadowworddeath && target.Angr <= 4 && p.mana >= (hc.getManaCost(p) + playhc.getManaCost(p))) return 5;
                 }
                 if (card.name == CardDB.cardName.crueltaskmaster || card.name == CardDB.cardName.innerrage)
                 {
@@ -258,14 +257,15 @@
                     {
                         foreach (Handmanager.Handcard hc in p.owncards)
                         {
-                            if (hc.card.name == CardDB.cardName.execute) return 0;
+                            if (hc.card.name == CardDB.cardName.execute && p.mana >= (hc.getManaCost(p) + playhc.getManaCost(p))) return 0;
                         }
                     }
-                    pen = 30;
+
+                    return 30;
                 }
                 else
                 {
-                    pen = 500;
+                    return 500;
                 }
             }
 
@@ -298,10 +298,10 @@
                 {
                     return 10;
                 }
+                if (card.name == CardDB.cardName.blessingofmight) return 6;
             }
 
-            if (card.name == CardDB.cardName.blessingofmight) return 6;
-            return pen;
+            return 0;
         }
 
         private int getHPBuffPenality(CardDB.Card card, Minion target, Playfield p, int choice)
