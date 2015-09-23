@@ -14,6 +14,21 @@
             retval += p.ownHero.Hp + p.ownHero.armor;
             retval += -(p.enemyHero.Hp + p.enemyHero.armor);
 
+            // a mix of control and face -- when our own hp is low, we need more control (increased penalty)
+            int hpboarder = 15;
+            if (p.ownHeroName == HeroEnum.warlock && p.enemyHeroName != HeroEnum.mage && p.enemyHeroName != HeroEnum.hunter) hpboarder = 10;
+            if ((p.ownHero.Hp + p.ownHero.armor) < hpboarder)
+            {
+                float multiplier = 1 + ((float)p.enemyMaxMana / 10) + ((float)p.enemyAnzCards / 5); // more potential for burst dmg with higher mana + cards
+                retval -= (int)(multiplier * (hpboarder - p.ownHero.Hp - p.ownHero.armor));
+            }
+
+            // when enemy hp is low, we need more face (decreased penalty)
+            if (p.enemyHero.Hp + p.enemyHero.armor < 15)
+            {
+                retval += 15 - p.enemyHero.Hp - p.enemyHero.armor;
+            }
+
             retval += p.ownMaxMana * 15 - p.enemyMaxMana * 15;
 
             if (p.ownWeaponAttack >= 1)
