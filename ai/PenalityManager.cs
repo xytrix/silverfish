@@ -2090,22 +2090,7 @@
                 }
             }
 
-            if (c.name == CardDB.cardName.acidicswampooze
-                && (p.enemyHeroName == HeroEnum.warrior || p.enemyHeroName == HeroEnum.thief
-                    || p.enemyHeroName == HeroEnum.pala))
-            {
-                if (p.enemyHeroName == HeroEnum.thief && p.enemyWeaponAttack <= 2)
-                {
-                    pen += 100;
-                }
-                else
-                {
-                    if (p.enemyWeaponAttack <= 1)
-                    {
-                        pen += 100;
-                    }
-                }
-            }
+
 
             if (p.enemyHeroName == HeroEnum.hunter)
             {
