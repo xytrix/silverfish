@@ -187,7 +187,7 @@
 
             retval += getDestroyPenality(name, target, p, lethal);
             retval += getbackToHandPenality(name, target, p, lethal);
-            retval += getSpecialCardComboPenalitys(card, target, p, lethal, choice, hcard.manacost);
+            retval += getSpecialCardComboPenalitys(hcard, target, p, lethal, choice);
             //if (lethal) Console.WriteLine(retval+ " " + name);
             retval += getRandomPenaltiy(card, p, target);
             if (!lethal)
@@ -1316,8 +1316,9 @@
         }
 
 
-        private int getSpecialCardComboPenalitys(CardDB.Card card, Minion target, Playfield p, bool lethal, int choice, int manaCostCard)
+        private int getSpecialCardComboPenalitys(Handmanager.Handcard playedhcard, Minion target, Playfield p, bool lethal, int choice)
         {
+            CardDB.Card card = playedhcard.card;
             CardDB.cardName name = card.name;
 
             if (lethal && card.type == CardDB.cardtype.MOB)
@@ -1646,19 +1647,33 @@
                     }
                 }
 
-                if (! mechOnField)
+                if (! mechOnField)  // penalize if we can play a mech this turn
                 {
-                    int manacost = card.getManaCost(p, manaCostCard);
+                    int lowestCostMechInHand = 1000;
                     foreach (Handmanager.Handcard hc in p.owncards)
                     {
-                        if (hc.card.race == TAG_RACE.MECHANICAL && p.mana >= (hc.getManaCost(p) + manacost)) return 500;//hc.card.race Should work? Nohero please confirm!
-                        if (hc.card.race == TAG_RACE.MECHANICAL && p.mana >= hc.getManaCost(p)) return 50;
-
+                        if (hc.card.race == TAG_RACE.MECHANICAL && hc.getManaCost(p) < lowestCostMechInHand) lowestCostMechInHand = hc.getManaCost(p);
                     }
+
+                    if (p.mana >= (playedhcard.getManaCost(p) + lowestCostMechInHand)) return 50;
+                    if (p.mana >= lowestCostMechInHand) return 20;
+
+                    return 0;
                 }
-                else
+                else  // penalize for randomness of battlecry
                 {
-                    return 20;
+                    bool hasNerubianEgg = false;
+                    foreach (Minion mnn in p.enemyMinions)
+                    {
+                        if (mnn.handcard.card.name == CardDB.cardName.nerubianegg && !m.silenced && m.Hp <= 2)
+                        {
+                            hasNerubianEgg = true;
+                            break;
+                        }
+                    }
+
+                    // less minions = less randomness to penalize, but more minions = less chance to kill egg, so egg penalty is constant
+                    return (hasNerubianEgg ? 10 : p.enemyMinions.Count);
                 }
             }
 
@@ -3221,7 +3236,7 @@
 
             this.randomEffects.Add(CardDB.cardName.animalcompanion, 1);
             this.randomEffects.Add(CardDB.cardName.arcanemissiles, 3);
-            this.randomEffects.Add(CardDB.cardName.goblinblastmage, 4);
+            this.randomEffects.Add(CardDB.cardName.goblinblastmage, 1);
             this.randomEffects.Add(CardDB.cardName.avengingwrath, 8);
 
             this.randomEffects.Add(CardDB.cardName.flamecannon, 4);
