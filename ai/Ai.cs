@@ -202,12 +202,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Helpfunctions.Instance.logg("Message ---");
-                    Helpfunctions.Instance.logg("Message ---" + ex.Message);
-                    Helpfunctions.Instance.logg("Source ---" + ex.Source);
-                    Helpfunctions.Instance.logg("StackTrace ---" + ex.StackTrace);
-                    Helpfunctions.Instance.logg("TargetSite ---\n{0}" + ex.TargetSite);
-
+                    Helpfunctions.Instance.logg("StackTrace ---" + ex.ToString());
                 }
                 Helpfunctions.Instance.logg("nmgsime-");
 
@@ -244,12 +239,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Helpfunctions.Instance.logg("Message ---");
-                    Helpfunctions.Instance.logg("Message ---" + ex.Message);
-                    Helpfunctions.Instance.logg("Source ---" + ex.Source);
-                    Helpfunctions.Instance.logg("StackTrace ---" + ex.StackTrace);
-                    Helpfunctions.Instance.logg("TargetSite ---\n{0}" + ex.TargetSite);
-
+                    Helpfunctions.Instance.logg("StackTrace ---" + ex.ToString());
                 }
                 Helpfunctions.Instance.logg("nmgsime-");
 
