@@ -212,6 +212,7 @@
 
             if (!lethal && (card.name == CardDB.cardName.savageroar || card.name == CardDB.cardName.bloodlust))
             {
+                int pen = 0;
                 int targets = 0;
                 foreach (Minion m in p.ownMinions)
                 {
