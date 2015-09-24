@@ -38,6 +38,8 @@
         //TODO: graveyard change (list <card,owner>)
         //Todo: vanish clear all auras/buffs (NEW1_004)
 
+        private static int instanceId = 0;
+        public int id = 0;  // for easier debugging
         public bool logging = false;
         public bool complete = false;
 
@@ -182,6 +184,7 @@
         public List<Minion> enemyMinions = new List<Minion>();
         public List<GraveYardItem> diedMinions = null;
         public int anzMinionsDiedThisTurn = 0;
+        public int numPlayerMinionsAtTurnStart = 0;  // used only for avenge
 
         public List<Handmanager.Handcard> owncards = new List<Handmanager.Handcard>();
         public int owncarddraw = 0;
@@ -268,6 +271,7 @@
 
         public Playfield()
         {
+            this.id = ++instanceId;
             this.nextEntity = 1000;
             //this.simulateEnemyTurn = Ai.Instance.simulateEnemyTurn;
             this.ownController = Hrtprozis.Instance.getOwnController();
@@ -624,6 +628,7 @@
 
         public Playfield(Playfield p)
         {
+            this.id = ++instanceId;
             this.isServer = p.isServer;
             this.nextEntity = p.nextEntity;
 
@@ -2174,10 +2179,17 @@
 
                 if (secretID == CardDB.cardIDEnum.FP1_020) // avenge
                 {
+                    if (this.numPlayerMinionsAtTurnStart < 2) continue;
+
                     // we give our weakest minion +3/+2 :D
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.Hp.CompareTo(b.Hp));//take the weakest
-                    if (temp.Count < 2) continue;
+                    if (temp.Count == 0)
+                    {
+                        // even though there's no minions to buff because the board was cleared, we still got value for the secret
+                        this.evaluatePenality -= 8;
+                        continue;
+                    }
                     foreach (Minion m in temp)
                     {
                         minionGetBuffed(m, 3, 2);
@@ -4341,6 +4353,8 @@
 
         public void triggerStartTurn(bool ownturn)
         {
+            this.numPlayerMinionsAtTurnStart = this.ownMinions.Count;
+
             if (ownturn)
             {
                 int at073 = 0;
@@ -6102,7 +6116,7 @@
         public void printBoard()
         {
             float copy = value;
-            Helpfunctions.Instance.logg("board: " + value + " ++++++++++++++++++++++");
+            Helpfunctions.Instance.logg("board: " + value + " id: " + this.id + "++++++++++++++++++++++");
             Helpfunctions.Instance.logg("pen " + this.evaluatePenality);
             Helpfunctions.Instance.logg("mana " + this.mana + "/" + this.ownMaxMana + " turnEndMana " + this.manaTurnEnd);
             Helpfunctions.Instance.logg("cardsplayed: " + this.cardsPlayedThisTurn + " handsize: " + this.owncards.Count + " eh " + this.enemyAnzCards + " " + this.enemycarddraw);
