@@ -80,6 +80,18 @@
             if (useAbili) retval -= 3;  // penalty in case the hero power was chosen over playing a card (penalty == card count bonus)
             //if (usecoin && p.mana >= 1) retval -= 20;
 
+            if (p.ownHeroName == HeroEnum.pala)
+            {
+                foreach (Handmanager.Handcard hc in p.owncards)
+                {
+                    if (hc.card.name == CardDB.cardName.avenge && p.manaTurnEnd >= hc.getManaCost(p))
+                    {
+                        retval -= 8;
+                        break;
+                    }
+                }
+            }
+
             foreach (Minion m in p.ownMinions)
             {
                 retval += m.Hp * 1;
