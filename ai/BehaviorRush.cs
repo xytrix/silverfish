@@ -140,6 +140,7 @@
                 else
                 {
                     retval += 50;//10000
+                    if (p.numPlayerMinionsAtTurnStart == 0) retval += 50; // if we can kill the enemy even after a board clear, bigger bonus
                 }
             }
             //soulfire etc
