@@ -683,8 +683,8 @@
                     {
                         pen = 15;
                     }
+                    }
                 }
-            }
 
             return pen;
         }
@@ -2871,6 +2871,14 @@
             this.specialMinions.Add(CardDB.cardName.mekgineerthermaplugg, 0);
             this.specialMinions.Add(CardDB.cardName.gazlowe, 0);
             this.specialMinions.Add(CardDB.cardName.troggzortheearthinator, 0);
+            this.specialMinions.Add(CardDB.cardName.clockworkgnome, 0);
+            this.specialMinions.Add(CardDB.cardName.explosivesheep, 0);
+            this.specialMinions.Add(CardDB.cardName.mechanicalyeti, 0);
+            this.specialMinions.Add(CardDB.cardName.pilotedshredder, 0);
+            this.specialMinions.Add(CardDB.cardName.pilotedskygolem, 0);
+            this.specialMinions.Add(CardDB.cardName.malorne, 0);
+            this.specialMinions.Add(CardDB.cardName.sneedsoldshredder, 0);
+            this.specialMinions.Add(CardDB.cardName.toshley, 0);
 
             //TGT
             this.specialMinions.Add(CardDB.cardName.lowlysquire, 0);
