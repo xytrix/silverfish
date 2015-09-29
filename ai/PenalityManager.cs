@@ -1649,6 +1649,32 @@
                 */
             }
 
+            if (name == CardDB.cardName.mechwarper)
+            {
+                List<Handmanager.Handcard> mechCards = p.owncards.FindAll(hc => hc != playedhcard && hc.card.race == TAG_RACE.MECHANICAL);
+                mechCards.Sort((a, b) => a.getManaCost(p).CompareTo(b.getManaCost(p)));  // increasing mana cost
+
+                int maxMechsNextTurnWithoutWarper = 0, maxMechsNextTurnWithWarper = 0;
+                int manaNextTurnWithoutWarper = p.ownMaxMana + 1, manaNextTurnWithWarper = p.ownMaxMana + 1;
+
+                for (int i = 0; i < mechCards.Count; i++)
+                {
+                    int cost = mechCards[i].getManaCost(p);
+                    if (manaNextTurnWithoutWarper > cost)
+                    {
+                        maxMechsNextTurnWithoutWarper++;
+                        manaNextTurnWithoutWarper -= cost;
+                    }
+                    if (manaNextTurnWithWarper > (cost - 1))
+                    {
+                        maxMechsNextTurnWithWarper++;
+                        manaNextTurnWithWarper -= (cost - 1);
+                    }
+                }
+
+                return -3*(maxMechsNextTurnWithWarper - maxMechsNextTurnWithoutWarper);  // +1 mana in savings per additional mech
+            }
+
             if (name == CardDB.cardName.goblinblastmage)
             {
                 bool mechOnField = false;
