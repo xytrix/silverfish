@@ -132,9 +132,28 @@
                 }
             }
 
+            bool canPingMinions = (p.ownHeroName == HeroEnum.mage);
+            bool hasPingedMinion = false;
+
             foreach (Minion m in p.enemyMinions)
             {
-                retval -= this.getEnemyMinionValue(m, p);
+                int currMinionValue = this.getEnemyMinionValue(m, p);
+
+                // Give a bonus for 1 hp minions as a mage, since we can remove it easier in the future with ping.
+                // But we make sure we only give this bonus once among all enemies. We also give another +1 bonus once if the atk >= 4.
+                if (canPingMinions && !hasPingedMinion && currMinionValue > 2 && m.Hp == 1)
+                {
+                    currMinionValue -= 1;
+                    canPingMinions = false;  // only 1 per turn (-1 bonus regardless of atk)
+                    hasPingedMinion = true;
+                }
+                if (hasPingedMinion && currMinionValue > 2 && m.Hp == 1 && m.Angr >= 4)
+                {
+                    currMinionValue -= 1;
+                    hasPingedMinion = false;  // only 1 per turn (-1 bonus additional for atk >= 4)
+                }
+
+                retval -= currMinionValue;
             }
 
             retval -= p.enemySecretCount;
