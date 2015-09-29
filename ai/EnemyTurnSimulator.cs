@@ -75,7 +75,7 @@
                 // if we have mage or priest or hunter, we have to target something####################################################
 
 
-                if (penmanager.TargetAbilitysDatabase.ContainsKey(posmoves[0].enemyHeroAblility.card.cardIDenum))
+                if (penmanager.TargetAbilitysDatabase.ContainsKey(posmoves[0].enemyHeroAblility.card.name))
                 {
 
                     List<Minion> trgts = posmoves[0].enemyHeroAblility.card.getTargetsForCardEnemy(posmoves[0]);

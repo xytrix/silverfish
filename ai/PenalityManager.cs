@@ -10,7 +10,7 @@
 
         ComboBreaker cb;
 
-        public Dictionary<CardDB.cardIDEnum, int> TargetAbilitysDatabase = new Dictionary<CardDB.cardIDEnum, int>();
+        public Dictionary<CardDB.cardName, int> TargetAbilitysDatabase = new Dictionary<CardDB.cardName, int>();
         Dictionary<CardDB.cardName, int> HealTargetDatabase = new Dictionary<CardDB.cardName, int>();
         Dictionary<CardDB.cardName, int> HealHeroDatabase = new Dictionary<CardDB.cardName, int>();
         Dictionary<CardDB.cardName, int> HealAllDatabase = new Dictionary<CardDB.cardName, int>();
@@ -583,18 +583,6 @@
                 }
             }
 
-            if (!lethal && !target.own && target.isHero)
-            {
-                if (name == CardDB.cardName.baneofdoom)
-                {
-                    pen = 500;
-                }
-                if (name == CardDB.cardName.lavashock && p.owedRecall == 0 && p.currentRecall==0)
-                {
-                    pen = 30;
-                }
-            }
-
             if (target.own && !target.isHero)
             {
                 if (DamageTargetDatabase.ContainsKey(name) || (p.anzOwnAuchenaiSoulpriest >= 1 && HealTargetDatabase.ContainsKey(name)))
@@ -672,23 +660,47 @@
                     pen = 500;
                 }
             }
+
+            if (!lethal && !target.own && target.isHero)
+            {
+                if (name == CardDB.cardName.baneofdoom)
+                {
+                    pen = 500;
+                }
+                else if (name == CardDB.cardName.lavashock && p.owedRecall == 0 && p.currentRecall == 0)
+                {
+                    pen = 30;
+                }
+                else if (!TargetAbilitysDatabase.ContainsKey(name))  // no penalties for hero power
+                {
+                    if (DamageTargetSpecialDatabase.ContainsKey(name))
+                        pen = DamageTargetSpecialDatabase[name];
+                    else if (DamageTargetDatabase.ContainsKey(name))
+                        pen = DamageTargetDatabase[name];
+
+                    pen += 5;  // extra penalty for targeting face
+                }
+            }
+
             if (!target.own && !target.isHero)
             {
                 if (DamageTargetSpecialDatabase.ContainsKey(name) || DamageTargetDatabase.ContainsKey(name))
                 {
                     Minion m = target;
                     if (name == CardDB.cardName.soulfire && m.maxHp <= 2) pen = 10;
-
-                    if (name == CardDB.cardName.baneofdoom && m.Hp >= 3) pen = 10;
-
-                    if (name == CardDB.cardName.shieldslam && (m.Hp <= 4 || m.Angr <= 4)) pen = 20;
-
-                    if (name == CardDB.cardName.lavashock && p.owedRecall == 0 && p.currentRecall == 0)
+                    else if (name == CardDB.cardName.baneofdoom && m.Hp >= 3) pen = 10;
+                    else if (name == CardDB.cardName.shieldslam && (m.Hp <= 4 || m.Angr <= 4)) pen = 20;
+                    else if (name == CardDB.cardName.lavashock && p.owedRecall == 0 && p.currentRecall == 0)
                     {
                         pen = 15;
                     }
+                    else if (!TargetAbilitysDatabase.ContainsKey(name))  // no penalties for hero power
+                    {
+                        // penalize by default so the damage from hand is saved for important swings rather than whenever we have extra mana.
+                        pen = (DamageTargetSpecialDatabase.ContainsKey(name) ? DamageTargetSpecialDatabase[name] : DamageTargetDatabase[name]);
                     }
                 }
+            }
 
             return pen;
         }
@@ -3353,17 +3365,27 @@
 
         private void setupTargetAbilitys()
         {
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS1h_001, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.DS1h_292, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.EX1_625t, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.EX1_625t2, 1);
-            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034_H1, 1);
-            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034_H1_AT_132, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_050t, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_HUNTER, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_MAGE, 1);
-            this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_PRIEST, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS1h_001, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.DS1h_292, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.EX1_625t, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.EX1_625t2, 1);
+            ////this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034_H1, 1);
+            ////this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.CS2_034_H1_AT_132, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_050t, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_HUNTER, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_MAGE, 1);
+            //this.TargetAbilitysDatabase.Add(CardDB.cardIDEnum.AT_132_PRIEST, 1);
+
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.lesserheal, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.fireblast, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.steadyshot, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.mindspike, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.mindshatter, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.lightningjolt, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.ballistashot, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.fireblastrank2, 1);
+            this.TargetAbilitysDatabase.Add(CardDB.cardName.heal, 1);
         }
 
     }

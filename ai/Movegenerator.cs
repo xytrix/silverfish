@@ -605,7 +605,7 @@
                 int abilityPenality = 0;
                 // if we have mage or priest, we have to target something####################################################
 
-                if (pen.TargetAbilitysDatabase.ContainsKey(p.ownHeroAblility.card.cardIDenum))
+                if (pen.TargetAbilitysDatabase.ContainsKey(p.ownHeroAblility.card.name))
                 {
                     List<Minion> trgts = p.ownHeroAblility.card.getTargetsForCard(p);
                     if (isLethalCheck && (p.ownHeroName == HeroEnum.mage || (p.ownHeroName == HeroEnum.priest && (p.ownHeroAblility.card.name != CardDB.cardName.lesserheal || (p.ownHeroAblility.card.name == CardDB.cardName.lesserheal && p.anzOwnAuchenaiSoulpriest >= 1)))))// only target enemy hero during Lethal check!
@@ -703,7 +703,7 @@
                 int abilityPenality = 0;
 
                 // if we have mage or priest, we have to target something####################################################
-                if (pen.TargetAbilitysDatabase.ContainsKey(p.ownHeroAblility.card.cardIDenum))
+                if (pen.TargetAbilitysDatabase.ContainsKey(p.ownHeroAblility.card.name))
                 {
                     List<Minion> trgts = p.enemyHeroAblility.card.getTargetsForCardEnemy(p);
                     foreach (Minion trgt in trgts)
