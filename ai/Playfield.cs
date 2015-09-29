@@ -2119,12 +2119,12 @@
                 {
                     if (this.ownMinions.Count == 0) continue;
 
-                    // assume enemy kills our lowest mana cost minion
+                    // assume enemy kills our lowest mana cost minion, and we get a vanilla drop of manacost-1
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.handcard.card.cost.CompareTo(b.handcard.card.cost));
                     
-                    int cardCost = Math.Min(8, temp[0].handcard.card.cost);  // cap card cost at 8 for giants, etc
-                    this.evaluatePenality -= cardCost * 3;  // value as if we played a vanilla minion of the same cost (i.e. 2*atk + hp)
+                    int cardCost = Math.Min(8, Math.Max(temp[0].handcard.card.cost - 1, 0));  // min cost 0 (wisp), max cost 8 (giants, etc)
+                    this.evaluatePenality -= cardCost * 3;  // value as if we played a vanilla minion of the same cost (i.e. 2*atk + hp, but atk==hp)
                 }
 
                 //pala secrets############
