@@ -25,43 +25,26 @@ namespace HREngine.Bots
                     return;
                 }
 
-                List<Minion> temp = (triggerEffectMinion.own) ? p.enemyMinions : p.ownMinions;
-                for (int i = 0; i < 2; i++)
+                List<Minion> targets = (triggerEffectMinion.own) ? new List<Minion>(p.enemyMinions) : new List<Minion>(p.ownMinions);
+
+                if (triggerEffectMinion.own)
                 {
-                    if (temp.Count >= 1)
-                    {
-                        //search Minion with lowest hp
-                        Minion enemy = temp[0];
-                        int minhp = 10000;
-                        bool found = false;
-                        foreach (Minion m in temp)
-                        {
-                            if (m.name == CardDB.cardName.nerubianegg && m.Hp >= 2) continue; //dont attack nerubianegg!
-                            if (m.handcard.card.isToken && m.Hp == 1) continue;
-                            if (m.name == CardDB.cardName.defender) continue;
-                            if (m.name == CardDB.cardName.spellbender) continue;
-                            if (m.Hp >= 2 && minhp > m.Hp)
-                            {
-                                enemy = m;
-                                minhp = m.Hp;
-                                found = true;
-                            }
-                        }
+                    targets.Add(p.enemyHero);
+                    targets.Sort((a, b) => -a.Hp.CompareTo(b.Hp));  // most hp -> least
+                }
+                else
+                {
+                    targets.Add(p.ownHero);
+                    targets.Sort((a, b) => a.Hp.CompareTo(b.Hp));  // least hp -> most
+                }
 
-                        if (found)
-                        {
-                            p.minionGetDamageOrHeal(enemy, 1);
-                        }
-                        else
-                        {
-                            p.minionGetDamageOrHeal(triggerEffectMinion.own ? p.enemyHero : p.ownHero, 1);
-                        }
-
-                    }
-                    else
-                    {
-                        p.minionGetDamageOrHeal(triggerEffectMinion.own ? p.enemyHero : p.ownHero, 1);
-                    }
+                // Distribute the damage evenly among the targets
+                int i = 0;
+                while (i < 2)
+                {
+                    int loc = i % targets.Count;
+                    p.minionGetDamageOrHeal(targets[loc], 1);
+                    i++;
                 }
 
                 triggerEffectMinion.stealth = false;
