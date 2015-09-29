@@ -1424,20 +1424,20 @@
             //lethal end########################################################
 
             //bonus for early thread
-            if (p.ownMaxMana == 1 )
-            {
-                //if (card.name == CardDB.cardName.nerubianegg) return -10;
-                if (card.name == CardDB.cardName.lepergnome) return -10;
-                if (card.name == CardDB.cardName.faeriedragon) return -20;
-                if (card.name == CardDB.cardName.shrinkmeister) return 0;
-                if (card.Attack >= 3 && card.Health >= 2) return -20;
+            //if (p.ownMaxMana == 1 )
+            //{
+            //    //if (card.name == CardDB.cardName.nerubianegg) return -10;
+            //    if (card.name == CardDB.cardName.lepergnome) return -10;
+            //    if (card.name == CardDB.cardName.faeriedragon) return -20;
+            //    if (card.name == CardDB.cardName.shrinkmeister) return 0;
+            //    if (card.Attack >= 3 && card.Health >= 2) return -20;
                 
-            }
+            //}
 
-            if (p.ownMaxMana == 2)
-            {
-                if (card.name == CardDB.cardName.nerubianegg) return -15;
-            }
+            //if (p.ownMaxMana == 2)
+            //{
+            //    if (card.name == CardDB.cardName.nerubianegg) return -15;
+            //}
 
             /*if (card.name == CardDB.cardName.flamewaker && p.turnCounter == 0)
             {
@@ -1451,7 +1451,7 @@
 
 
 
-            if (card.name == CardDB.cardName.unstableportal && p.owncards.Count <= 9) return -15;
+            //if (card.name == CardDB.cardName.unstableportal && p.owncards.Count <= 9) return -15;
 
             if (card.name == CardDB.cardName.daggermastery)
             {
