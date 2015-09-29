@@ -104,6 +104,10 @@
                 }
 
             }
+            if (!m.silenced && (m.name == CardDB.cardName.acolyteofpain || ((m.name == CardDB.cardName.loothoarder || m.name == CardDB.cardName.bloodmagethalnos) && !target.isHero && target.Angr >= m.Hp)))
+            {
+                pen += p.playactions.Count;  // penalize not utilizing the card draw as early as possible
+            }
             return pen;
         }
 
