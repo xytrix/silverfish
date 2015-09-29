@@ -14,7 +14,6 @@
             int hpboarder = 10;
             if (p.ownHeroName == HeroEnum.warlock && p.enemyHeroName != HeroEnum.mage) hpboarder = 6;
             int aggroboarder = 11;
-
             retval -= p.evaluatePenality;
             retval += p.owncards.Count * 5;
 
@@ -82,6 +81,15 @@
             //int owntaunt = 0;
             int readycount = 0;
             int ownMinionsCount = 0;
+
+            bool enemyhaspatron = false;
+            foreach (Minion m in p.enemyMinions)
+            {
+                retval -= this.getEnemyMinionValue(m, p);
+                if (m.name == CardDB.cardName.grimpatron && !m.silenced && p.enemyHeroName == HeroEnum.warrior) enemyhaspatron = true;
+                //hasTank = hasTank || m.taunt;
+            }
+
             foreach (Minion m in p.ownMinions)
             {
                 retval += 5;
@@ -112,12 +120,15 @@
                 if (m.handcard.card.name == CardDB.cardName.nerubianegg)
                 {
                     if (m.Angr >= 1) retval += 2;
-                    if (m.divineshild || m.maxHp > 2) retval -= 10;
+                    if (m.divineshild || (m.maxHp > 2 && !m.destroyOnOwnTurnEnd)) retval -= 10;
                     if (p.ownMinions.Count >= 3) retval += 15;
                 }
                 if (m.Ready) readycount++;
                 if (m.maxHp >= 4 && (m.Angr > 2 || m.Hp > 3)) ownMinionsCount++;
+                if (enemyhaspatron && m.Angr <= 3) retval -= 20;
             }
+
+           
 
             /*if (p.enemyMinions.Count >= 0)
             {
@@ -157,6 +168,7 @@
             if (p.manaTurnEnd >= heropowermana && !useAbili && p.ownAbilityReady)
             {
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
+                if (p.ownHeroName == HeroEnum.pala && enemyhaspatron) retval += 20;
             }
             //if (usecoin && p.manaTurnEnd >= 1 && p.owncards.Count <= 8) retval -= 100;
 
@@ -167,22 +179,28 @@
                 if (hc.card.type == CardDB.cardtype.MOB)
                 {
                     mobsInHand++;
-                    if (hc.card.Attack >= 3) bigMobsInHand++;
+                    if (hc.card.Attack >= 3 && hc.card.Health >= 3) bigMobsInHand++;
                 }
             }
 
-            if (ownMinionsCount - p.enemyMinions.Count >= 4 && bigMobsInHand >= 1)
+            //stuff for not flooding board
+            int mobsturnbegin = Hrtprozis.Instance.ownMinions.Count;
+            if (ownMinionsCount > mobsturnbegin)
             {
-                retval += bigMobsInHand * 25;
+                if (ownMinionsCount - p.enemyMinions.Count >= 3)
+                {
+                    retval += bigMobsInHand * 50 + mobsInHand * 10;
+                }
+
+                if (p.turnCounter <= 1 && p.ownMinions.Count - p.enemyMinions.Count >= 4)
+                {
+                    retval -= (p.ownMinions.Count - p.enemyMinions.Count - 3) * 10;
+                }
             }
 
 
             //bool hasTank = false;
-            foreach (Minion m in p.enemyMinions)
-            {
-                retval -= this.getEnemyMinionValue(m, p);
-                //hasTank = hasTank || m.taunt;
-            }
+            
 
             /*foreach (SecretItem si in p.enemySecretList)
             {
@@ -227,13 +245,35 @@
                 if (a.card.card.name == CardDB.cardName.soulfire || a.card.card.name == CardDB.cardName.doomguard || a.card.card.name == CardDB.cardName.succubus) deletecardsAtLast = 1;
                 if (deletecardsAtLast == 1 && !(a.card.card.name == CardDB.cardName.soulfire || a.card.card.name == CardDB.cardName.doomguard || a.card.card.name == CardDB.cardName.succubus)) retval -= 20;
             }
-            if (p.enemyHero.Hp >= 1 && p.guessingHeroHP <= 0)
+
+            if (p.enemyHero.Hp >= 1 && p.ownHero.Hp <= 0)
             {
-                if (p.turnCounter < 2) retval += p.owncarddraw * 100;
-                retval -= 1000;
+                //Helpfunctions.Instance.ErrorLog("turncounter " + p.turnCounter + " " + retval);
+                if (p.turnCounter == 0) // own turn 
+                {
+                    //worst case: we die on own turn
+                    retval += p.owncarddraw * 100;
+                    retval = -10000;
+                }
+                else
+                {
+                    if (p.turnCounter == 1) // enemys first turn
+                    {
+                        retval += p.owncarddraw * 100;
+                        retval -= 1000;
+                    }
+                    if (p.turnCounter >= 2)
+                    {
+                        //carddraw next turn doesnt count this turn :D
+                        retval -= 100;
+                    }
+                }
+                
+                
+                
             }
-            
-            if (p.ownHero.Hp <= 0) retval = -10000;
+
+            //if (p.ownHero.Hp <= 0 && p.turnCounter < 2) retval = -10000;
 
             p.value = retval;
             return retval;

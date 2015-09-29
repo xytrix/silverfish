@@ -103,6 +103,9 @@ namespace HREngine.Bots
             Helpfunctions.Instance.ErrorLog("read _mulligan.txt...");
             foreach (string line in lines)
             {
+                string shortline = line.Replace(" ", "");
+                if (shortline.StartsWith("//")) continue;
+
                 if (line.StartsWith("loser"))
                 {
                     this.loserLoserLoser = true;
@@ -171,7 +174,11 @@ namespace HREngine.Bots
 
                         if (line.Split(';').Length >= 6)
                         {
-                            int manarule = Convert.ToInt32(line.Split(';')[5]);
+                            string mr = (line.Split(';')[5]).Replace(" ", "");
+                            if (mr == "") continue;
+                            int manarule = Convert.ToInt32(mr);
+                            if (manarule <= 0) continue;
+                            Console.WriteLine("manarule "+mr); 
                             this.holdlist.Add(new mulliitem(line, "#MANARULE", ownclass, enemyclass, 2, null, coinrule, manarule));
                         }
 
@@ -198,15 +205,19 @@ namespace HREngine.Bots
                                 if (coin == "nocoin") coinrule = 1;
                                 if (coin == "coin") coinrule = 2;
                             }
+
                             foreach (string crd in cardlist.Split(','))
                             {
                                 if (crd == null || crd == "") continue;
                                 this.deletelist.Add(new mulliitem(line, crd, ownclass, enemyclass, 2,null, coinrule, -1));
                             }
 
-                            if (line.Split(';').Length == 5)
+                            if (line.Split(';').Length >= 6)
                             {
-                                int manarule = Convert.ToInt32(line.Split(';')[4]);
+                                string mr = (line.Split(';')[5]).Replace(" ","");
+                                if (mr == "") continue;
+                                int manarule = Convert.ToInt32(mr);
+                                if (manarule <= 0) continue;
                                 this.deletelist.Add(new mulliitem(line, "#MANARULE", ownclass, enemyclass, 2, null, coinrule, manarule));
                             }
 
@@ -254,6 +265,15 @@ namespace HREngine.Bots
 
         public List<int> whatShouldIMulligan(List<CardIDEntity> cards, string ownclass, string enemclass, bool hascoin)
         {
+            Helpfunctions.Instance.ErrorLog("do mulligan...");
+            if (hascoin)
+            {
+                Helpfunctions.Instance.ErrorLog("we hold the coin");
+            }
+            else
+            {
+                Helpfunctions.Instance.ErrorLog("we dont hold the coin");
+            }
             List<int> discarditems = new List<int>();
             bool usedManarule = false;
             foreach (mulliitem mi in this.deletelist)
