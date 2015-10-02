@@ -13,6 +13,7 @@
             public int addattack = 0;
             public int addHp = 0;
             public CardDB.Card card;
+            public bool isGeneratedEntity = false;
 
             public Handcard()
             {
@@ -26,6 +27,7 @@
                 this.card = hc.card;
                 this.addattack = hc.addattack;
                 this.addHp = hc.addHp;
+                this.isGeneratedEntity = hc.isGeneratedEntity;
             }
             public Handcard(CardDB.Card c)
             {

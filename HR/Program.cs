@@ -70,6 +70,13 @@ namespace HREngine.Bots
         private int dirtytarget = -1;
         private int dirtychoice = -1;
         private string choiceCardId = "";
+
+        public int numExecsReceived = 0;
+        public int numActionsSent = 0;
+        public bool shouldSendActions = true;
+
+        public List<Playfield> queuedMoveGuesses = new List<Playfield>();
+
         DateTime starttime = DateTime.Now;
         Silverfish sf;
 
@@ -265,8 +272,10 @@ namespace HREngine.Bots
         /// <param name="e">e.deck_list -- all cards id in the deck.</param>
         public override void OnGameStart(GameStartEventArgs e)
         {
-            //do nothing here
-        }
+            // reset instance vars
+            numExecsReceived = 0;
+            numActionsSent = 0;
+    }
 
         /// <summary>
         /// invoke when game ends.
@@ -373,6 +382,7 @@ namespace HREngine.Bots
                     break;
                 case actionEnum.playcard:
                     ranger_action.Actor = getCardWithNumber(moveTodo.card.entity);
+                    if (ranger_action.Actor == null) return null;  // missing entity likely because new spawned minion
                     break;
                 case actionEnum.attackWithHero:
                     ranger_action.Actor = base.FriendHero;
@@ -382,6 +392,7 @@ namespace HREngine.Bots
                     break;
                 case actionEnum.attackWithMinion:
                     ranger_action.Actor = getEntityWithNumber(moveTodo.own.entitiyID);
+                    if (ranger_action.Actor == null) return null;  // missing entity likely because new spawned minion
                     break;
                 default:
                     break;
@@ -390,7 +401,8 @@ namespace HREngine.Bots
              if (moveTodo.target != null)
              {
                  ranger_action.Target = getEntityWithNumber(moveTodo.target.entitiyID);
-             }
+                 if (ranger_action.Target == null) return null;  // missing entity likely because new spawned minion
+            }
 
              ranger_action.Type = GetRangerActionType(ranger_action.Actor, ranger_action.Target, moveTodo.actionType);
 
@@ -403,20 +415,17 @@ namespace HREngine.Bots
 
              if (moveTodo.target != null)
              {
-                 Helpfunctions.Instance.ErrorLog(moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId)
-                                                  + " target: " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Target.CardId));
-                 Helpfunctions.Instance.logg(moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId)
-                                                  + " target: " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Target.CardId)
-                                                  + " choice: " + moveTodo.druidchoice + " place" + moveTodo.place);
-
+                 ranger_action.ID = moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId)
+                                    + " target: " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Target.CardId);
+                 Helpfunctions.Instance.ErrorLog(ranger_action.ID);
+                 Helpfunctions.Instance.logg(ranger_action.ID + " choice: " + moveTodo.druidchoice + " place" + moveTodo.place);
 
              }
              else
              {
-                 Helpfunctions.Instance.ErrorLog(moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId)
-                                                  + " target nothing");
-                 Helpfunctions.Instance.logg(moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId)
-                                                  + " choice: " + moveTodo.druidchoice + " place" + moveTodo.place);
+                 ranger_action.ID = moveTodo.actionType.ToString() + ": " + HSRangerLib.CardDefDB.Instance.GetCardEnglishName(ranger_action.Actor.CardId);
+                 Helpfunctions.Instance.ErrorLog(ranger_action.ID + " target nothing");
+                 Helpfunctions.Instance.logg(ranger_action.ID + " choice: " + moveTodo.druidchoice + " place" + moveTodo.place);
              }
 
 
@@ -465,6 +474,12 @@ namespace HREngine.Bots
                 bool templearn = sf.updateEverything(this,behave, Settings.Instance.useExternalProcess, false); // cant use passive waiting (in this mode i return nothing)
                 if (templearn == true) Settings.Instance.printlearnmode = true;
 
+                //  AI has requested to ignore this update, so return without setting any actions.
+                if (!shouldSendActions)
+                {
+                    shouldSendActions = true;  // unpause ourselves for next time
+                    return;
+                }
 
 
                 if (Settings.Instance.learnmode)
@@ -487,24 +502,42 @@ namespace HREngine.Bots
                     return;
                 }
 
-                Action moveTodo = Ai.Instance.bestmove;
-
-                if (moveTodo == null || moveTodo.actionType == actionEnum.endturn)
+                this.queuedMoveGuesses.Clear();
+                this.queuedMoveGuesses.Add(new Playfield());  // prior to any changes, in case HR fails to execute any actions
+                bool hasMoreActions = false;
+                
+                do
                 {
-                    //simply clear action list, hearthranger bot will endturn if no action can do.
-                    e.action_list.Clear();                    
-                    return;
+                    Action moveTodo = Ai.Instance.bestmove;
+
+                    if (!hasMoreActions && (moveTodo == null || moveTodo.actionType == actionEnum.endturn))
+                    {
+                        //simply clear action list, hearthranger bot will endturn if no action can do.
+                        e.action_list.Clear();
+                        return;
+                    }
+
+                    Helpfunctions.Instance.ErrorLog("play action");
+                    moveTodo.print();
+
+                    BotAction nextMove = ConvertToRangerAction(moveTodo);
+                    if (nextMove == null) return;  // Prevent exceptions for expected errors like missing entityID for new spawned minions
+
+                    e.action_list.Add(nextMove);
+                    this.queuedMoveGuesses.Add(new Playfield(Ai.Instance.nextMoveGuess));
+
+                    hasMoreActions = canQueueNextActions();
+                    if (hasMoreActions) Ai.Instance.doNextCalcedMove();
                 }
+                while (hasMoreActions);
 
-                Helpfunctions.Instance.ErrorLog("play action");
-                moveTodo.print();
-
-                e.action_list.Add(ConvertToRangerAction(moveTodo));
+                numActionsSent = e.action_list.Count();
+                Helpfunctions.Instance.ErrorLog("sending HR " + numActionsSent + " queued actions");
+                numExecsReceived = 0;
             }
             catch (Exception Exception)
             {
-                Helpfunctions.Instance.ErrorLog(Exception.Message);
-                Helpfunctions.Instance.ErrorLog(Environment.StackTrace);
+                Helpfunctions.Instance.ErrorLog(Exception.ToString());
                 if (Settings.Instance.learnmode)
                 {
                     e.action_list.Clear();
@@ -516,10 +549,47 @@ namespace HREngine.Bots
 
         public override void OnActionDone(ActionDoneEventArgs e)
         {
-            //do nothing here            
+            numExecsReceived++;
+
+            switch (e.done_result)
+            {
+                case ActionDoneEventArgs.ActionResult.Executed:
+                    Helpfunctions.Instance.ErrorLog("HR action " + numExecsReceived + " done <executed>: " + e.action_id); break;
+                case ActionDoneEventArgs.ActionResult.SourceInvalid:
+                    Helpfunctions.Instance.ErrorLog("HR action " + numExecsReceived + " done <invalid_source>: " + e.action_id); break;
+                case ActionDoneEventArgs.ActionResult.TargetInvalid:
+                    Helpfunctions.Instance.ErrorLog("HR action " + numExecsReceived + " done <invalid_target>: " + e.action_id); break;
+            }
+
         }
 
+        private bool canQueueNextActions()
+        {
+            if (!Ai.Instance.canQueueNextMoves()) return false;
 
+            // HearthRanger will re-query bestmove after a targeted minion buff. So even though we can queue moves after,
+            // there's no point because we'll just print error messages when HearthRanger ignores them.
+            if (Ai.Instance.bestmove.actionType == actionEnum.playcard)
+            {
+                CardDB.cardName card = Ai.Instance.bestmove.card.card.name;
+
+                if (card == CardDB.cardName.abusivesergeant
+                    || card == CardDB.cardName.darkirondwarf
+                    || card == CardDB.cardName.crueltaskmaster
+                    || card == CardDB.cardName.screwjankclunker
+                    || card == CardDB.cardName.lancecarrier
+                    || card == CardDB.cardName.clockworkknight
+                    || card == CardDB.cardName.shatteredsuncleric
+                    || card == CardDB.cardName.houndmaster
+                    || card == CardDB.cardName.templeenforcer
+                    || card == CardDB.cardName.wildwalker)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         int lossedtodo = 0;
         int KeepConcede = 0;
@@ -1128,32 +1198,46 @@ namespace HREngine.Bots
 
             Playfield p = new Playfield();
 
-
-
             if (lastpf != null)
             {
-                if (lastpf.isEqualf(p))
+                bool isSameAsLastUpdate = lastpf.isEqualf(p);
+
+                if (isSameAsLastUpdate)
                 {
+                    ((Bot)rangerbot).shouldSendActions = false;  // let the bot know we haven't updated any actions
                     return false;
                 }
 
                 //board changed we update secrets!
                 //if(Ai.Instance.nextMoveGuess!=null) Probabilitymaker.Instance.updateSecretList(Ai.Instance.nextMoveGuess.enemySecretList);
-                Probabilitymaker.Instance.updateSecretList(p, lastpf);
-                lastpf = p;
-            }
-            else
-            {
-                lastpf = p;
+                if (!isSameAsLastUpdate) Probabilitymaker.Instance.updateSecretList(p, lastpf);
             }
 
+            lastpf = p;
+
             p = new Playfield();//secrets have updated :D
-            // calculate stuff
+                                // calculate stuff
 
             /*foreach (Handmanager.Handcard hc in p.owncards)
             {
                 Helpfunctions.Instance.ErrorLog("hc playfield" + hc.manacost + " " + hc.getManaCost(p));
             }*/
+
+            
+            // Detect errors in HearthRanger execution of our last set of actions and try to fix it so we don't
+            // have to re-calculate the entire turn.
+            Bot currentBot = (Bot)rangerbot;
+            if (currentBot.numActionsSent > currentBot.numExecsReceived && !p.isEqualf(Ai.Instance.nextMoveGuess))
+            {
+                Helpfunctions.Instance.ErrorLog("HR action queue did not complete!");
+                Helpfunctions.Instance.logg("board state out-of-sync due to action queue!");
+
+                if (Ai.Instance.restoreBestMoves(p, currentBot.queuedMoveGuesses))
+                {
+                    Helpfunctions.Instance.logg("rolled back state to replay queued actions.");
+                    Helpfunctions.Instance.ErrorLog("#queue-rollback#");
+                }
+            }
 
             Helpfunctions.Instance.ErrorLog("calculating stuff... " + DateTime.Now.ToString("HH:mm:ss.ffff"));
             if (runExtern)

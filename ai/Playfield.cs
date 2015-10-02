@@ -1136,19 +1136,6 @@
                 }
             }
 
-            for (int i = 0; i < this.ownMinions.Count; i++)
-            {
-                Minion dis = this.ownMinions[i]; Minion pis = p.ownMinions[i];
-                if (dis.entitiyID != pis.entitiyID) Ai.Instance.updateEntitiy(pis.entitiyID, dis.entitiyID);
-
-            }
-
-            for (int i = 0; i < this.enemyMinions.Count; i++)
-            {
-                Minion dis = this.enemyMinions[i]; Minion pis = p.enemyMinions[i];
-                if (dis.entitiyID != pis.entitiyID) Ai.Instance.updateEntitiy(pis.entitiyID, dis.entitiyID);
-
-            }
             if (this.ownSecretsIDList.Count != p.ownSecretsIDList.Count)
             {
                 if (logg) Helpfunctions.Instance.logg("secretsCount changed");
@@ -1162,6 +1149,22 @@
                     return false;
                 }
             }
+
+            // now we're sure the boards are equal
+            for (int i = 0; i < this.ownMinions.Count; i++)
+            {
+                Minion dis = this.ownMinions[i]; Minion pis = p.ownMinions[i];
+                if (dis.entitiyID != pis.entitiyID) Ai.Instance.updateEntitiy(pis.entitiyID, dis.entitiyID);
+
+            }
+
+            for (int i = 0; i < this.enemyMinions.Count; i++)
+            {
+                Minion dis = this.enemyMinions[i]; Minion pis = p.enemyMinions[i];
+                if (dis.entitiyID != pis.entitiyID) Ai.Instance.updateEntitiy(pis.entitiyID, dis.entitiyID);
+
+            }
+
             return true;
         }
 
@@ -2239,8 +2242,8 @@
                         }
                         if (this.enemyHero.armor == 0)
                         {
-                            this.enemyHero.Hp -= attack;
-                        }
+                        this.enemyHero.Hp -= attack;
+                    }
                         else
                         {
                             if (this.enemyHero.armor >= attack)
@@ -2400,7 +2403,7 @@
                 this.sEnemTurn = false;
                 
             }
-            this.turnCounter++;
+                this.turnCounter++;
             this.attacked = false;
             this.optionsPlayedThisTurn = 0;
             this.cardsPlayedThisTurn = 0;
@@ -5452,7 +5455,7 @@
             int mobplace = zonepos + 1;//todo check this?
 
             //create minion (+triggers)
-            Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity() };
+            Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity(), isGeneratedEntity = true };
             Minion m = createNewMinion(hc, mobplace, own);
             //put it on battle field (+triggers)
             addMinionToBattlefield(m);
@@ -5657,7 +5660,7 @@
                     {
                         CardDB.Card c = CardDB.Instance.getCardDataFromID(s);
                         int manac = Math.Max(0, c.cost - this.anzownShadowfiends);
-                        Handmanager.Handcard hc = new Handmanager.Handcard { card = c, position = this.owncards.Count + 1, manacost = manac, entity = this.getNextEntity() };
+                        Handmanager.Handcard hc = new Handmanager.Handcard { card = c, position = this.owncards.Count + 1, manacost = manac, entity = this.getNextEntity(), isGeneratedEntity = true };
                         this.owncards.Add(hc);
                     }
                 }
