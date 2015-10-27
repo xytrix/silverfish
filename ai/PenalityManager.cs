@@ -40,7 +40,7 @@
         Dictionary<CardDB.cardName, int> buffingMinionsDatabase = new Dictionary<CardDB.cardName, int>();
         Dictionary<CardDB.cardName, int> buffing1TurnDatabase = new Dictionary<CardDB.cardName, int>();
         Dictionary<CardDB.cardName, int> heroDamagingAoeDatabase = new Dictionary<CardDB.cardName, int>();
-        Dictionary<CardDB.cardName, int> randomEffects = new Dictionary<CardDB.cardName, int>();
+        public Dictionary<CardDB.cardName, int> randomEffects = new Dictionary<CardDB.cardName, int>();
 
         Dictionary<CardDB.cardName, int> silenceTargets = new Dictionary<CardDB.cardName, int>();
 
@@ -213,6 +213,19 @@
             CardDB.Card card = playhc.card;
             CardDB.cardName name = card.name;
             if (name == CardDB.cardName.darkwispers && choice != 1) return 0;
+
+            if (!lethal && (card.name == CardDB.cardName.bolster))
+            {
+                int targets = 0;
+                foreach (Minion m in p.ownMinions)
+                {
+                    if (m.taunt) targets++;
+                }
+                if (targets < 2)
+                {
+                    return 10;
+                }
+            }
 
             if (!lethal && (card.name == CardDB.cardName.savageroar || card.name == CardDB.cardName.bloodlust))
             {
@@ -423,7 +436,7 @@
                     if (lethal)
                     {
                         //during lethal we only silence taunt, or if its a mob (owl/spellbreaker) + we can give him charge
-                        if (m.taunt || (name == CardDB.cardName.ironbeakowl && (p.ownMinions.Find(x => x.name == CardDB.cardName.tundrarhino) != null || p.ownMinions.Find(x => x.name == CardDB.cardName.warsongcommander) != null || p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null)) || (name == CardDB.cardName.spellbreaker && p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null)) return 0;
+                        if (m.taunt || (name == CardDB.cardName.ironbeakowl && (p.ownMinions.Find(x => x.name == CardDB.cardName.tundrarhino) != null || p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null)) || (name == CardDB.cardName.spellbreaker && p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null)) return 0; // || p.ownMinions.Find(x => x.name == CardDB.cardName.warsongcommander) != null
 
                         return 500;
                     }
@@ -1212,22 +1225,24 @@
             if (target == null) return 0;
             if (target.own && !target.isHero)
             {
+                // dont destroy owns ;_; (except mins with deathrattle effects)
                 Minion m = target;
                 if (!m.handcard.card.deathrattle)
                 {
                     pen = 500;
                 }
             }
+
             if (!target.own && !target.isHero)
             {
-                // dont destroy owns ;_; (except mins with deathrattle effects)
 
+                // destroy others
                 Minion m = target;
 
-                if (m.allreadyAttacked)
+                /*if (m.allreadyAttacked)//doesnt make sence :D
                 {
                     return 50;
-                }
+                }*/
 
                 if (name == CardDB.cardName.shadowwordpain)
                 {
@@ -1241,6 +1256,8 @@
                     return 10;
                 }
 
+                
+
                 if (m.Angr >= 4 || m.Hp >= 5)
                 {
                     pen = 0; // so we dont destroy cheap ones :D
@@ -1248,6 +1265,11 @@
                 else
                 {
                     pen = 30;
+                }
+
+                if ( m.name == CardDB.cardName.doomsayer )
+                {
+                    pen = 0;
                 }
 
                 if (name == CardDB.cardName.mindcontrol && (m.name == CardDB.cardName.direwolfalpha || m.name == CardDB.cardName.raidleader || m.name == CardDB.cardName.flametonguetotem) && p.enemyMinions.Count == 1)
@@ -1361,6 +1383,17 @@
                         }
                         if (beasts == 0) return 500;
                     }
+
+                    if (name == CardDB.cardName.warsongcommander)
+                    {
+                        int beasts = 0;
+                        foreach (Minion mm in p.ownMinions)
+                        {
+                            if (mm.charge>=1) beasts++;
+                        }
+                        if (beasts == 0) return 500;
+                    }
+
                     if (name == CardDB.cardName.southseacaptain)
                     {
                         int beasts = 0;
@@ -1424,7 +1457,8 @@
                         }
                         else
                         {
-                            if (!(name == CardDB.cardName.nightblade || card.Charge || this.silenceDatabase.ContainsKey(name) || ((TAG_RACE)card.race == TAG_RACE.PET && p.ownMinions.Find(x => x.name == CardDB.cardName.tundrarhino) != null) || (p.ownMinions.Find(x => x.name == CardDB.cardName.warsongcommander) != null && card.Attack <= 3) || p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null))
+                            //ignore that minion if it does not have charge, or we can give him charge ---> warsong was deleted ;_;
+                            if (!(name == CardDB.cardName.nightblade || card.Charge || this.silenceDatabase.ContainsKey(name) || ((TAG_RACE)card.race == TAG_RACE.PET && p.ownMinions.Find(x => x.name == CardDB.cardName.tundrarhino) != null) || p.owncards.Find(x => x.card.name == CardDB.cardName.charge) != null))
                             {
                                 return 500;
                             }
@@ -1443,6 +1477,7 @@
             //    if (card.name == CardDB.cardName.faeriedragon) return -20;
             //    if (card.name == CardDB.cardName.shrinkmeister) return 0;
             //    if (card.Attack >= 3 && card.Health >= 2) return -20;
+            //    if (card.name == CardDB.cardName.wildgrowth) return -150;
                 
             //}
 
@@ -1496,9 +1531,12 @@
 
             }
 
-            if (name == CardDB.cardName.flare && p.enemySecretCount >= 1 && p.playactions.Count == 0)
+            if (name == CardDB.cardName.flare) 
             {
-                return -10;
+                if (p.enemyHeroName != HeroEnum.hunter && p.enemyHeroName != HeroEnum.mage && p.enemyHeroName == HeroEnum.pala) return 0;
+                //it is a hunter/mage or pala:
+                if (p.enemySecretCount == 0) return 50;
+                if (p.enemySecretCount >= 1 && p.playactions.Count == 0)  return -10;
             }
 
             //some effects, which are bad :D
@@ -2991,6 +3029,7 @@
             buffingMinionsDatabase.Add(CardDB.cardName.templeenforcer, 0);
             buffingMinionsDatabase.Add(CardDB.cardName.timberwolf, 0);
             buffingMinionsDatabase.Add(CardDB.cardName.malganis, 0);
+            buffingMinionsDatabase.Add(CardDB.cardName.warsongcommander, 0);
 
             buffing1TurnDatabase.Add(CardDB.cardName.abusivesergeant, 0);
             buffing1TurnDatabase.Add(CardDB.cardName.darkirondwarf, 0);
