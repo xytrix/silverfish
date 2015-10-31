@@ -5517,7 +5517,7 @@
                     return;
                 }
             }
-            int mobplace = zonepos + 1;//todo check this?
+            int mobplace = (spawnKid ? zonepos : zonepos + 1);//todo check this?
 
             //create minion (+triggers)
             Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity() };
