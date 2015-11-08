@@ -51,6 +51,7 @@
         public Dictionary<CardDB.cardName, int> cardDrawBattleCryDatabase = new Dictionary<CardDB.cardName, int>();
         public Dictionary<CardDB.cardName, int> priorityTargets = new Dictionary<CardDB.cardName, int>();
         public Dictionary<CardDB.cardName, int> specialMinions = new Dictionary<CardDB.cardName, int>(); //minions with cardtext, but no battlecry
+        Dictionary<CardDB.cardName, int> strongInspireEffectMinions = new Dictionary<CardDB.cardName, int>();
 
 
         private static PenalityManager instance;
@@ -83,6 +84,7 @@
             setupLethalHelpMinions();
             setupSilenceTargets();
             setupTargetAbilitys();
+            setupStrongInspireMinions();
         }
 
         public void setCombos()
@@ -198,6 +200,7 @@
             {
                 retval += cb.getPenalityForDestroyingCombo(card, p);
                 retval += cb.getPlayValue(card.cardIDenum);
+                retval += getPlayInspirePenalty(hcard, p);
             }
 
             retval += playSecretPenality(card, p);
@@ -206,6 +209,27 @@
             retval += (int)card.pen_card.getPlayPenalty(p, hcard, target, choice, lethal);
             //Helpfunctions.Instance.ErrorLog("retval " + retval);
             return retval;
+        }
+
+        private int getPlayInspirePenalty(Handmanager.Handcard playhc, Playfield p)
+        {
+            // Penalize for playing Inspire minions without Inspire effect
+
+            CardDB.Card card = playhc.card;
+            CardDB.cardName name = card.name;
+
+            if (!this.strongInspireEffectMinions.ContainsKey(name)) return 0;
+
+            // check already used hero power
+            if (p.playactions.Find(a => a.actionType == actionEnum.useHeroPower) != null) return 1 + (5 * strongInspireEffectMinions[name]);
+
+            int ownplaycost = playhc.getManaCost(p);
+            int heropowercost = p.ownHeroAblility.card.getManaCost(p, 2);
+
+            // check not enough mana to gain Inspire buff
+            if (p.mana < ownplaycost + heropowercost) return 2 * strongInspireEffectMinions[name];
+
+            return 0;
         }
 
         private int getAttackBuffPenality(Handmanager.Handcard playhc, Minion target, Playfield p, int choice, bool lethal)
@@ -3425,6 +3449,26 @@
             this.TargetAbilitysDatabase.Add(CardDB.cardName.ballistashot, 1);
             this.TargetAbilitysDatabase.Add(CardDB.cardName.fireblastrank2, 1);
             this.TargetAbilitysDatabase.Add(CardDB.cardName.heal, 1);
+        }
+
+        private void setupStrongInspireMinions()
+        {
+            // value = 0 implies minion is safe to play as vanilla minion
+
+            strongInspireEffectMinions.Add(CardDB.cardName.boneguardlieutenant, 0);
+            strongInspireEffectMinions.Add(CardDB.cardName.confessorpaletress, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.dalaranaspirant, 1);
+            strongInspireEffectMinions.Add(CardDB.cardName.kodorider, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.kvaldirraider, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.lowlysquire, 0);
+            strongInspireEffectMinions.Add(CardDB.cardName.muklaschampion, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.murlocknight, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.nexuschampionsaraad, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.recruiter, 3);
+            strongInspireEffectMinions.Add(CardDB.cardName.thunderbluffvaliant, 10);
+            strongInspireEffectMinions.Add(CardDB.cardName.tournamentmedic, 1);
+            strongInspireEffectMinions.Add(CardDB.cardName.savagecombatant, 4);
+            strongInspireEffectMinions.Add(CardDB.cardName.silverhandregent, 3);
         }
 
     }
