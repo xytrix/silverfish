@@ -300,7 +300,7 @@
                 {
                     foreach (Minion mnn in p.ownMinions)
                     {
-                        if (m.Ready)
+                            if (mnn.Ready)
                         {
                             hasownready = true;
                             break;
