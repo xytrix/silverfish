@@ -206,6 +206,8 @@
             retval += playSecretPenality(card, p);
             retval += getPlayCardSecretPenality(card, p);
 
+            if (card.name == p.ownHeroAblility.card.name) retval += getHeroPowerPenality(hcard, target, p);
+
             // TODO: the mukla's champion penalty probably belongs in getSpecialCardComboPenalitys, but that whole function would have to be edited
             // to take into account the additional penalty (instead of returning its own penalties for each case)
             if (card.type == CardDB.cardtype.MOB
@@ -218,6 +220,24 @@
             retval += (int)card.pen_card.getPlayPenalty(p, hcard, target, choice, lethal);
             //Helpfunctions.Instance.ErrorLog("retval " + retval);
             return retval;
+        }
+
+        private int getHeroPowerPenality(Handmanager.Handcard hcard, Minion target, Playfield p)
+        {
+            CardDB.Card card = hcard.card;
+            CardDB.cardName name = card.name;
+
+            // penalize playing hero power after spell dmg cards
+            if (name == CardDB.cardName.totemiccall || name == CardDB.cardName.totemicslam)  // shaman
+            {
+                if (p.ownMinions.Find(m => m.name == CardDB.cardName.wrathofairtotem) != null) return 0;  // already have spelldmg totem, so no penalty
+
+                return p.playactions.FindAll(a => a.actionType == actionEnum.playcard && a.card.card.type == CardDB.cardtype.SPELL
+                    && (DamageTargetSpecialDatabase.ContainsKey(a.card.card.name) || DamageTargetDatabase.ContainsKey(a.card.card.name)
+                        || a.card.card.name == CardDB.cardName.lightningstorm || a.card.card.name == CardDB.cardName.elementaldestruction)).Count;
+            }
+
+            return 0;
         }
 
         private int getPlayInspirePenalty(Handmanager.Handcard playhc, Playfield p)
