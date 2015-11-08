@@ -184,6 +184,10 @@
             }
             if (p.ownHero.Hp <= 0) retval = -10000;*/
 
+            // give a bonus for making the enemy spend more mana dealing with our board, so boards where the enemy makes different plays
+            // aren't considered as equal value (i.e. attacking the enemy and making him spend mana to heal vs not attacking at all)
+            if (p.turnCounter == 1 || p.turnCounter == 3) retval += p.enemyMaxMana - p.mana;
+
             p.value = retval;
             return retval;
         }
@@ -191,7 +195,7 @@
         public override int getEnemyMinionValue(Minion m, Playfield p)
         {
 
-            int retval = 0;
+            int retval = 1;  // Give a base value of 1, so in the event of equal boards next turn vs this turn, minion removal is prioritzed earlier rather than later.;
             if (m.name == CardDB.cardName.cutpurse) retval += 40;
             if (m.taunt || (m.handcard.card.targetPriority >= 1 && !m.silenced))
             {
