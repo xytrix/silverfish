@@ -468,8 +468,8 @@ namespace HREngine.Bots
             
             try
             {
-                //HR-only fix for being to fast
-                if (!this.doMultipleThingsAtATime && this.gameState.IsProcessingPowers)
+                //HR-only fix for being too fast (querying next move before finishing previous move)
+                if (this.gameState.IsProcessingPowers)
                 {
                     //do fake action
                     BotAction fakemove = new HSRangerLib.BotAction();
@@ -477,8 +477,8 @@ namespace HREngine.Bots
                     fakemove.Actor = base.FriendHero;
                     fakemove.Target = this.FriendHero;
                     e.action_list.Add(fakemove);
-                    Helpfunctions.Instance.logg("HR is to fast...");
-                    Helpfunctions.Instance.ErrorLog("HR is to fast...");
+                    Helpfunctions.Instance.logg("HR is too fast...");
+                    Helpfunctions.Instance.ErrorLog("HR is too fast...");
                     return;
                 }
 
@@ -569,12 +569,10 @@ namespace HREngine.Bots
 
                         if (!hasMoreActions && (moveTodo == null || moveTodo.actionType == actionEnum.endturn))
                         {
-                            Helpfunctions.Instance.ErrorLog("enturn");
-                            //simply clear action list, hearthranger bot will endturn if no action can do.
+                            Helpfunctions.Instance.ErrorLog("endturn");
                             BotAction endturnmove = new HSRangerLib.BotAction();
                             endturnmove.Type = BotActionType.END_TURN;
                             e.action_list.Add(endturnmove);
-                            hasMoreActions = false;
                         }
                         else
                         {
@@ -588,7 +586,7 @@ namespace HREngine.Bots
                             e.action_list.Add(nextMove);
                             this.queuedMoveGuesses.Add(new Playfield(Ai.Instance.nextMoveGuess));
 
-                            hasMoreActions = canQueueNextActions();
+                            hasMoreActions = Ai.Instance.canQueueNextMoves();
                             if (hasMoreActions) Ai.Instance.doNextCalcedMove();
                         }
                     }
@@ -634,33 +632,6 @@ namespace HREngine.Bots
         }
 
 
-        private bool canQueueNextActions()
-        {
-            if (!Ai.Instance.canQueueNextMoves()) return false;
-
-            // HearthRanger will re-query bestmove after a targeted minion buff. So even though we can queue moves after,
-            // there's no point because we'll just print error messages when HearthRanger ignores them.
-            if (Ai.Instance.bestmove.actionType == actionEnum.playcard)
-            {
-                CardDB.cardName card = Ai.Instance.bestmove.card.card.name;
-
-                if (card == CardDB.cardName.abusivesergeant
-                    || card == CardDB.cardName.darkirondwarf
-                    || card == CardDB.cardName.crueltaskmaster
-                    || card == CardDB.cardName.screwjankclunker
-                    || card == CardDB.cardName.lancecarrier
-                    || card == CardDB.cardName.clockworkknight
-                    || card == CardDB.cardName.shatteredsuncleric
-                    || card == CardDB.cardName.houndmaster
-                    || card == CardDB.cardName.templeenforcer
-                    || card == CardDB.cardName.wildwalker)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
 
         int lossedtodo = 0;
