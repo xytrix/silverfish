@@ -110,6 +110,13 @@
             {
                 pen += p.playactions.Count;  // penalize not utilizing the card draw as early as possible
             }
+
+            if (!lethal && target.isHero && !target.own && m.tempAttack >= 3
+                && p.playactions.Find(a => a.actionType == actionEnum.playcard && a.card.card.name == CardDB.cardName.rockbiterweapon && a.target.entitiyID == m.entitiyID) != null)
+            {
+                pen += 50;
+            }
+
             return pen;
         }
 
@@ -126,9 +133,18 @@
                 return 28;
             }
 
-            if (!leathal && target.entitiyID == p.enemyHero.entitiyID && p.ownWeaponAttack>=1 && p.enemyHero.Hp >= enfacehp)
+            if (!leathal && target.entitiyID == p.enemyHero.entitiyID)
             {
-                if (!(p.ownHeroName == HeroEnum.thief && p.ownWeaponAttack == 1)) return 50+p.ownWeaponAttack;
+                if (p.ownWeaponAttack >= 1 && p.enemyHero.Hp >= enfacehp)
+                {
+                    if (p.ownWeaponName == CardDB.cardName.lightsjustice && p.ownWeaponDurability >= 3) return 0;
+                    if (!(p.ownHeroName == HeroEnum.thief && p.ownWeaponAttack == 1)) return 50 + p.ownWeaponAttack;
+                }
+
+                if (p.ownHero.tempAttack > 0 && p.playactions.Find(a => a.actionType == actionEnum.playcard && a.card.card.name == CardDB.cardName.rockbiterweapon && a.target.entitiyID == p.ownHero.entitiyID) != null)
+                {
+                    return 50;
+                }
             }
 
             if (p.ownWeaponDurability == 1 && p.ownWeaponName == CardDB.cardName.eaglehornbow)
@@ -370,6 +386,11 @@
                     return 10;
                 }
                 if (card.name == CardDB.cardName.blessingofmight) return 6;
+            }
+
+            if (target.own && name == CardDB.cardName.rockbiterweapon)
+            {
+                return 10;
             }
 
             return 0;
@@ -2699,6 +2720,7 @@
             this.attackBuffDatabase.Add(CardDB.cardName.markofthewild, 2);
             this.attackBuffDatabase.Add(CardDB.cardName.nightmare, 5); //destroy minion on next turn
             this.attackBuffDatabase.Add(CardDB.cardName.rampage, 3);//only damaged minion 
+            this.attackBuffDatabase.Add(CardDB.cardName.rockbiterweapon, 3);
             this.attackBuffDatabase.Add(CardDB.cardName.uproot, 5);
             this.attackBuffDatabase.Add(CardDB.cardName.velenschosen, 2);
 
@@ -3086,6 +3108,7 @@
 
             buffing1TurnDatabase.Add(CardDB.cardName.abusivesergeant, 0);
             buffing1TurnDatabase.Add(CardDB.cardName.darkirondwarf, 0);
+            buffing1TurnDatabase.Add(CardDB.cardName.rockbiterweapon, 0); // spell
 
             buffingMinionsDatabase.Add(CardDB.cardName.metaltoothleaper, 0);
             buffingMinionsDatabase.Add(CardDB.cardName.quartermaster, 0);
