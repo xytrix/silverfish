@@ -52,7 +52,7 @@
             //RR if lethal is close, carddraw value is increased
 
 
-            if (Ai.Instance.lethalMissing <= 5) //RR
+            if (p.turnCounter == 0 && Ai.Instance.lethalMissing <= 5) //RR
             {
                 retval += p.owncarddraw * 100;
             }
