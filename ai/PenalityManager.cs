@@ -206,6 +206,15 @@
             retval += playSecretPenality(card, p);
             retval += getPlayCardSecretPenality(card, p);
 
+            // TODO: the mukla's champion penalty probably belongs in getSpecialCardComboPenalitys, but that whole function would have to be edited
+            // to take into account the additional penalty (instead of returning its own penalties for each case)
+            if (card.type == CardDB.cardtype.MOB
+                && p.ownMinions.Find(m => m.name == CardDB.cardName.muklaschampion && !m.silenced) != null
+                && p.playactions.Find(a => a.actionType == actionEnum.useHeroPower) != null)
+            {
+                // penalize playing minions after mukla's +1/+1 buff
+                retval += 5;
+            }
             retval += (int)card.pen_card.getPlayPenalty(p, hcard, target, choice, lethal);
             //Helpfunctions.Instance.ErrorLog("retval " + retval);
             return retval;
