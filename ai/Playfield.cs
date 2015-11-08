@@ -2256,7 +2256,7 @@
 
                         this.evaluatePenality += 100 * hasReady;
                     }
-                    else
+                    else if (!simulateTwoTurns)  // only penalize for not attacking if we're not simulating the 2nd turn (sometimes it's better to not attack)
                     {
                         if (this.enemySecretCount >= 1)
                         {
