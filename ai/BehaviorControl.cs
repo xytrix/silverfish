@@ -188,6 +188,7 @@
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
                 if (p.ownHeroName == HeroEnum.pala && enemyhaspatron) retval += 20;
             }
+            if (useAbili && usecoin == 2) retval -= 5;  // prevent being wasteful with innervate if we could've just not used hero power for 2mana
             //if (usecoin && p.manaTurnEnd >= 1 && p.owncards.Count <= 8) retval -= 100;
 
             int mobsInHand = 0;

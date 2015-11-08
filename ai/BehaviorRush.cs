@@ -94,6 +94,7 @@
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
             }
             if (useAbili) retval -= 3;  // penalty in case the hero power was chosen over playing a card (penalty == card count bonus)
+            if (useAbili && usecoin == 2) retval -= 5;  // prevent being wasteful with innervate if we could've just not used hero power for 2mana
             //if (usecoin && p.mana >= 1) retval -= 20;
 
             if (p.ownHeroName == HeroEnum.pala)
