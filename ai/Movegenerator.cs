@@ -697,13 +697,15 @@
             }
 
 
+            // TODO: This statement is never called (turndeep always != 0) and should probably be removed if the code gets too outdated.
+            // Currently all enemy hero power use is handled in EnemyTurnSimulator
             //if he can use ability use it on his turnstart or never!###########################################################################################
-            if (turndeep == 0 && p.enemyAbilityReady && p.mana >= 2 && p.enemyHeroAblility.card.canplayCard(p, 0) && p.ownloatheb==0)
+            if (turndeep == 0 && p.enemyAbilityReady && p.mana >= 2 && p.enemyHeroAblility.card.canplayCard(p, 0) && p.ownSaboteur == 0)
             {
                 int abilityPenality = 0;
 
                 // if we have mage or priest, we have to target something####################################################
-                if (pen.TargetAbilitysDatabase.ContainsKey(p.ownHeroAblility.card.name))
+                if (pen.TargetAbilitysDatabase.ContainsKey(p.enemyHeroAblility.card.name))
                 {
                     List<Minion> trgts = p.enemyHeroAblility.card.getTargetsForCardEnemy(p);
                     foreach (Minion trgt in trgts)

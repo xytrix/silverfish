@@ -66,45 +66,35 @@
 
 
             //play ability!
-
-            if (posmoves[0].enemyAbilityReady && enemMana >= 2 && posmoves[0].enemyHeroAblility.card.canplayCard(posmoves[0], 0) && rootfield.ownSaboteur == 0)//loatheb doesnt do anything to heropower
+            for (int n = 0; n < posmoves.Count; n++)  // allows playing multiple hero abilities (TGT) + ability after AoE w/ playaround
             {
-                int abilityPenality = 0;
-
-                havedonesomething = true;
-                // if we have mage or priest or hunter, we have to target something####################################################
-
-
-                if (penmanager.TargetAbilitysDatabase.ContainsKey(posmoves[0].enemyHeroAblility.card.name))
+                Playfield pipi = posmoves[n];
+                if (pipi.enemyAbilityReady && pipi.enemyHeroAblility.card.canplayCard(pipi, 2) && pipi.ownSaboteur == 0)
                 {
+                    if (penmanager.TargetAbilitysDatabase.ContainsKey(pipi.enemyHeroAblility.card.name))
+                    {
+                        List<Minion> trgts = pipi.enemyHeroAblility.card.getTargetsForCardEnemy(pipi);
+                        foreach (Minion trgt in trgts)
+                        {
+                            Action a = new Action(actionEnum.useHeroPower, pipi.enemyHeroAblility, null, 0, trgt, 0, 0);
+                            Playfield pf = new Playfield(pipi);
+                            pf.doAction(a);
+                            posmoves.Add(pf);
+                        }
+                    }
+                    else
+                    {
+                        // the other classes dont have to target####################################################
+                        if ((pipi.enemyHeroName == HeroEnum.thief && pipi.enemyWeaponDurability == 0) || pipi.enemyHeroName != HeroEnum.thief || pipi.enemyMinions.Find(m => m.handcard.card.hasInspire) != null)
+                        {
+                            Action a = new Action(actionEnum.useHeroPower, pipi.enemyHeroAblility, null, 0, null, 0, 0);
+                            Playfield pf = new Playfield(pipi);
+                            pf.doAction(a);
+                            posmoves.Add(pf);
+                        }
+                    }
 
-                    List<Minion> trgts = posmoves[0].enemyHeroAblility.card.getTargetsForCardEnemy(posmoves[0]);
-                    foreach (Minion trgt in trgts)
-                    {
-                        if (trgt.isHero) continue;
-                        Action a = new Action(actionEnum.useHeroPower, posmoves[0].enemyHeroAblility, null, 0, trgt, abilityPenality, 0);
-                        Playfield pf = new Playfield(posmoves[0]);
-                        pf.doAction(a);
-                        posmoves.Add(pf);
-                    }
                 }
-                else
-                {
-                    bool hasinspire = false;
-                    foreach (Minion minie in rootfield.enemyMinions)
-                    {
-                        if (minie.handcard.card.hasInspire) hasinspire = true;
-                    }
-                    // the other classes dont have to target####################################################
-                    if ((rootfield.enemyHeroName == HeroEnum.thief && rootfield.enemyWeaponDurability == 0) || rootfield.enemyHeroName != HeroEnum.thief || hasinspire)
-                    {
-                        Action a = new Action(actionEnum.useHeroPower, posmoves[0].enemyHeroAblility, null, 0, null, abilityPenality, 0);
-                        Playfield pf = new Playfield(posmoves[0]);
-                        pf.doAction(a);
-                        posmoves.Add(pf);
-                    }
-                }
-
             }
 
             //kill to strong minions with low hp
