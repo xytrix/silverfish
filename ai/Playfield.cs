@@ -5885,7 +5885,7 @@
         {
             m.endAura(this);
 
-            Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = m.entitiyID };
+            Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity() };
             int ancestral = m.ancestralspirit;
             if (m.handcard.card.name == CardDB.cardName.cairnebloodhoof || m.handcard.card.name == CardDB.cardName.harvestgolem || ancestral >= 1)
             {
