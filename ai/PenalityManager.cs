@@ -2063,11 +2063,13 @@
 
                 if (!target.own && !target.isHero)
                 {
-                    if (target.allreadyAttacked) return 30;
+                    int hexpen = 10;  // base penalty so we don't waste the spell on small minions
+                    if (target.allreadyAttacked) hexpen += 30;
                     Minion frog = target;
-                    if (this.priorityTargets.ContainsKey(frog.name)) return 0;
-                    if (frog.Angr >= 4 && frog.Hp >= 4) return 0;
-                    return 30;
+                    if (!frog.silenced && this.priorityTargets.ContainsKey(frog.name) && this.priorityTargets[frog.name] >= 5) return hexpen;
+                    if (frog.Angr >= 4 && frog.Hp >= 4) return 0;  // no base penalty because minion is not small
+                    if (frog.Angr >= 4 && !frog.silenced && this.silenceTargets.ContainsKey(frog.name)) return hexpen+5;
+                    return hexpen+30;
                 }
 
             }
