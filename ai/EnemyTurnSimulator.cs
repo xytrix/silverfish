@@ -319,7 +319,7 @@
                         if (p.enemyAnzCards >= 2 && p.mana>=2)
                         {
                             m.divineshild = true;
-                            p.mana -= 2;
+                            //p.mana -= 2;
                         }
                         break;
 
@@ -355,8 +355,8 @@
                         //if there is something to heal... draw a card with northshirecleric
                     case CardDB.cardName.northshirecleric:
                         {
-                            if (p.mana <= 2) break;
-                            p.mana -= 2;
+                            //if (p.mana <= 2) break;
+                            //p.mana -= 2;
                             int anz = 0;
                             foreach (Minion mnn in p.enemyMinions)
                             {
@@ -366,13 +366,10 @@
                             {
                                 if (mnn.wounded) anz++;
                             }
-                            anz = Math.Min(anz, 3);
-                            for (int i = 0; i < anz; i++)
+                            //anz = Math.Min(anz, 3);
+                            if (anz > 0 && p.enemyDeckSize >= 1)
                             {
-                                if (p.enemyDeckSize >= 1)
-                                {
-                                    p.drawACard(CardDB.cardIDEnum.None, false);
-                                }
+                                p.drawACard(CardDB.cardIDEnum.None, false);
                             }
                             break;
                         }
@@ -430,11 +427,22 @@
                         }
                         break;
 
+                    case CardDB.cardName.floatingwatcher:
+                        if (p.enemyHeroName == HeroEnum.warlock && p.enemyAnzCards >= 3)  // hero power use is covered in dmgTriggers()
+                        {
+                            p.minionGetBuffed(m, 2, 2);
+                        }
+                        break;
+
                     case CardDB.cardName.murloctidecaller:
                     case CardDB.cardName.undertaker:
                         if (p.enemyAnzCards >= 2)
                         {
                             p.minionGetBuffed(m, 1, 0);
+                            if (p.enemyAnzCards >= 4 && p.enemyMaxMana >= 4)
+                            {
+                                p.minionGetBuffed(m, 1, 0);
+                            }
                         }
                         break;
 
@@ -448,9 +456,7 @@
                     case CardDB.cardName.gurubashiberserker:
                         if (m.Hp >= 2 && (p.enemyAnzCards >= 1 || p.enemyHeroName == HeroEnum.mage ||
                             (p.anzEnemyAuchenaiSoulpriest > 0 && p.enemyHeroName == HeroEnum.priest)
-                            || (p.enemyHeroName == HeroEnum.priest && p.enemyHeroAblility.card.name == CardDB.cardName.lesserheal)
-                            ) // what about shadow form?
-                            )
+                            || (p.enemyHeroName == HeroEnum.priest && p.enemyHeroAblility.card.name != CardDB.cardName.lesserheal && p.enemyHeroAblility.card.name != CardDB.cardName.heal))) // shadow form
                         {
                             p.minionGetBuffed(m, 3, 0);
                         }
@@ -465,7 +471,7 @@
                                 if (mnn.wounded) anz++;
                             }
                             if (p.enemyHero.wounded) anz++;
-                            if (anz >= 2) p.minionGetBuffed(m, 2, 0);
+                            if (anz > 0) p.minionGetBuffed(m, 2, 0);
                             break;
                         }
                 }
@@ -475,13 +481,16 @@
             if (p.enemyMinions.Count < 7 && p.mana>=2)
             {
                 p.callKid(this.flame, p.enemyMinions.Count, false);
-                int bval = 0;
-                if (p.mana > 3) bval = 1;
-                if (p.mana > 4) bval = 2;
-                if (p.mana > 5) bval = 3;
-                if (p.mana > 6) bval = 4;
-                if (p.mana > 9) bval = 5;
-                if (p.enemyMinions.Count >= 1) p.minionGetBuffed(p.enemyMinions[p.enemyMinions.Count - 1], bval - 1, bval);
+                int bval = 1;  // 2mana => 2/2
+                if (p.mana > 3) bval = 2; // 3mana => 3/3
+                if (p.mana > 4) bval = 3; // 4mana => 4/4
+                if (p.mana > 5) bval = 4; // 5mana => 5/5
+                if (p.mana > 6) bval = 5; // 6+ => 6/6
+                if (p.enemyMinions.Count >= 1)
+                {
+                    p.minionGetBuffed(p.enemyMinions[p.enemyMinions.Count - 1], bval - 1, bval);
+                    p.enemyMinions[p.enemyMinions.Count - 1].cantBeTargetedBySpellsOrHeroPowers = true;  // prevent the bot from assuming it can efficiently remove whatever this minion is with spells
+                }
             }
         }
 
