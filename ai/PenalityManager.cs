@@ -188,7 +188,7 @@
             //there is no reason to buff HP of minon (because it is not healed)
 
             int abuff = getAttackBuffPenality(hcard, target, p, choice, lethal);
-            int tbuff = getTauntBuffPenality(name, target, p, choice);
+            int tbuff = getTauntBuffPenality(hcard, target, p, choice);
             if (name == CardDB.cardName.markofthewild && ((abuff >= 500 && tbuff == 0) || (abuff == 0 && tbuff >= 500)))
             {
                 retval = 0;
@@ -418,21 +418,29 @@
         {
             CardDB.cardName name = card.name;
             if (name == CardDB.cardName.darkwispers && choice != 1) return 0;
-            int pen = 0;
+            
             //buff enemy?
             if (!this.healthBuffDatabase.ContainsKey(name)) return 0;
-            if (target!=null && !target.own && !this.tauntBuffDatabase.ContainsKey(name))
+
+            if (target == null)
             {
-                pen = 500;
+                // penalize for lost buff
+                if (card.type == CardDB.cardtype.MOB) return healthBuffDatabase[name];
             }
 
-            return pen;
+            if (target!=null && !target.own && !this.tauntBuffDatabase.ContainsKey(name))
+            {
+                return 500;
+            }
+
+            return 0;
         }
 
 
-        private int getTauntBuffPenality(CardDB.cardName name, Minion target, Playfield p, int choice)
+        private int getTauntBuffPenality(Handmanager.Handcard playedhcard, Minion target, Playfield p, int choice)
         {
             int pen = 0;
+            CardDB.cardName name = playedhcard.card.name;
             //buff enemy?
             if (!this.tauntBuffDatabase.ContainsKey(name)) return 0;
             if (name == CardDB.cardName.markofnature && choice != 2) return 0;
@@ -443,7 +451,7 @@
                 //allow it if you have black knight
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.card.name == CardDB.cardName.theblackknight) return 0;
+                    if (hc.card.name == CardDB.cardName.theblackknight && (p.mana >= playedhcard.getManaCost(p) + hc.getManaCost(p))) return 0;
                 }
 
                 // allow taunting if target is priority and others have taunt
