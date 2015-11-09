@@ -1,4 +1,6 @@
-﻿namespace HREngine.Bots
+﻿using System.Collections.Generic;
+
+namespace HREngine.Bots
 {
     public class BehaviorFace : Behavior
     {
@@ -215,7 +217,16 @@
 
                 
                 if (!m.frozen && m.Angr >= 4) retval += 20 + m.Hp;
-                if (!m.frozen && m.Angr >= 7) retval += 50 + m.Hp;
+                if (!m.frozen && m.Angr >= 7)
+                {
+                    List<Minion> myTaunts = p.ownMinions.FindAll(own => own.taunt);
+                    List<Minion> enemyAttackers = p.enemyMinions.FindAll(enm => enm.entitiyID != m.entitiyID && enm.Angr > 0 && !enm.frozen);
+                    int totalTauntHp = 0;
+                    int totalAtkDmg = 0;
+                    myTaunts.ForEach(taunt => totalTauntHp += taunt.Hp);
+                    enemyAttackers.ForEach(atkr => totalAtkDmg += atkr.Angr);
+                    if (myTaunts.Count < enemyAttackers.Count && totalTauntHp <= totalAtkDmg) retval += 30 + m.Hp;
+                }
                 if (m.name == CardDB.cardName.nerubianegg && m.Angr <= 3 && !m.taunt) retval = 0;
             }
 

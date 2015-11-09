@@ -1,4 +1,6 @@
-﻿namespace HREngine.Bots
+﻿using System.Collections.Generic;
+
+namespace HREngine.Bots
 {
 
     public class BehaviorControl : Behavior
@@ -322,7 +324,16 @@
                 retval += m.Angr * 2;
                 if (m.windfury) retval += m.Angr * 2;
                 if (m.Angr >= 4) retval += 10;
-                if (m.Angr >= 7) retval += 50;
+                if (m.Angr >= 7)
+                {
+                    List<Minion> myTaunts = p.ownMinions.FindAll(own => own.taunt);
+                    List<Minion> enemyAttackers = p.enemyMinions.FindAll(enm => enm.entitiyID != m.entitiyID && enm.Angr > 0 && !enm.frozen);
+                    int totalTauntHp = 0;
+                    int totalAtkDmg = 0;
+                    myTaunts.ForEach(taunt => totalTauntHp += taunt.Hp);
+                    enemyAttackers.ForEach(atkr => totalAtkDmg += atkr.Angr);
+                    if (myTaunts.Count < enemyAttackers.Count && totalTauntHp <= totalAtkDmg) retval += 30;
+                }
             }
 
             if (m.Angr == 0) retval -= 7;
