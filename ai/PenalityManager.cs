@@ -319,6 +319,12 @@
             {
                 //if ((p.ownMaxMana <= 2 && (p.enemyHeroName == HeroEnum.mage || p.enemyHeroName == HeroEnum.hunter)))
                 //    return 10;
+                if (card.type == CardDB.cardtype.MOB)
+                {
+                    if (card.name == CardDB.cardName.metaltoothleaper && p.ownMinions.Find(mech => mech.handcard.card.race == TAG_RACE.MECHANICAL) != null) return 0;
+                    return 4 * attackBuffDatabase[name];
+                }
+
                 return 60;
             }
 
@@ -361,12 +367,18 @@
                 Minion m = target;
                 bool hasownready = false;
                 
+                //vs mage or hunter we need board presence at early game? so we skip the minion ready-check.
+                // for everyone else, we penalize buffing minions when they are not ready
 
-                //vs mage or hunter we need board presence at early game? (so if it is not the case-> whe should use it to buff)
-                if (!(p.ownMaxMana <= 2 && (p.enemyHeroName == HeroEnum.mage || p.enemyHeroName == HeroEnum.hunter))) hasownready = true;
-
-                if (!hasownready)
+                if (p.ownMaxMana > 2 || (p.enemyHeroName != HeroEnum.mage && p.enemyHeroName != HeroEnum.hunter))
                 {
+                    if (card.name == CardDB.cardName.clockworkknight || card.name == CardDB.cardName.screwjankclunker)
+                    {
+                        // hasownready can only apply to mechs
+                        hasownready = p.ownMinions.Find(mnn => mnn.handcard.card.race == TAG_RACE.MECHANICAL && mnn.Ready) != null;
+                    }
+                    else
+                    {
                     foreach (Minion mnn in p.ownMinions)
                     {
                             if (mnn.Ready)
@@ -376,13 +388,19 @@
                         }
                     }
                 }
+                }
 
-                if (!m.Ready && hasownready)
+                if (!m.Ready && !m.taunt && hasownready)
                 {
-                    return 50;
+                    if (this.buffing1TurnDatabase.ContainsKey(name)) return 50;
+
+                    return 5 * attackBuffDatabase[name];
                 }
                 if (m.Hp == 1 && !m.divineshild && !this.buffing1TurnDatabase.ContainsKey(name))
                 {
+                    if (this.healthBuffDatabase.ContainsKey(name)) return 0;  // m.Hp no longer == 1
+                    if (card.type == CardDB.cardtype.MOB) return 2 * attackBuffDatabase[name] + 1;  // only 1pt worse than playing vanilla minion with same stats and no atk buff
+
                     return 10;
                 }
                 if (card.name == CardDB.cardName.blessingofmight) return 6;
@@ -2750,6 +2768,7 @@
             this.healthBuffDatabase.Add(CardDB.cardName.velenschosen, 4);
             this.healthBuffDatabase.Add(CardDB.cardName.darkwispers, 5);//choice1
             this.healthBuffDatabase.Add(CardDB.cardName.upgradedrepairbot, 4);
+            this.healthBuffDatabase.Add(CardDB.cardName.screwjankclunker, 2);
             this.healthBuffDatabase.Add(CardDB.cardName.armorplating, 1);
             //this.healthBuffDatabase.Add(CardDB.cardName.rooted, 5);
 
