@@ -1626,7 +1626,7 @@
             {
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.manacost <= p.ownMaxMana && hc.card.type == CardDB.cardtype.MOB) return 5;
+                    if (hc.card.type == CardDB.cardtype.MOB && hc.canplayCard(p)) return 5;
                 }
 
             }
@@ -1652,7 +1652,7 @@
             }
             if (name == CardDB.cardName.aldorpeacekeeper && target == null)
             {
-                pen = 30;
+                return 30;
             }
 
             if (name == CardDB.cardName.sylvanaswindrunner && p.enemyMinions.Count == 0)
@@ -1667,21 +1667,23 @@
 
             if (name == CardDB.cardName.emergencycoolant && target != null && target.own)//dont freeze own minions
             {
-                pen = 500;
+                return 500;
             }
 
-            if (name == CardDB.cardName.shatteredsuncleric && target == null) { pen = 10; }
+            if (name == CardDB.cardName.shatteredsuncleric && target == null) { return 10; }
             if (name == CardDB.cardName.argentprotector)
             {
-                if (target == null) { pen = 20; }
+                if (target == null) { return 20; }
                 else
                 {
                     if (!target.own) { return 500; }
-                    if (target.divineshild) { pen = 15; }
-                    if (!target.Ready && !target.handcard.card.isSpecialMinion) { pen = 10; }
-                    if (!target.Ready && !target.handcard.card.isSpecialMinion && target.Angr <= 2 && target.Hp <= 2) { pen = 15; }
+                    if (target.divineshild) { return 15; }
+                    if (!target.Ready && !target.handcard.card.isSpecialMinion)
+                    {
+                        if (target.Angr <= 2 && target.Hp <= 2) return 15;
+                        return 10;
+                    }
                 }
-
             }
 
             if (name == CardDB.cardName.facelessmanipulator)
@@ -1868,7 +1870,8 @@
                 }
             }
 
-            if (card.name == CardDB.cardName.knifejuggler && p.mobsplayedThisTurn > 1 || (p.ownHeroName == HeroEnum.shaman && p.ownAbilityReady == false))
+            if (card.name == CardDB.cardName.knifejuggler && (p.mobsplayedThisTurn > 1 
+                || ((p.ownHeroName == HeroEnum.shaman || p.ownHeroName == HeroEnum.pala) && p.ownAbilityReady == false)))
             {
                 return 20;
             }
@@ -1935,7 +1938,7 @@
             {
                 if ((p.ownHero.numAttacksThisTurn == 0 || (p.ownHero.windfury && p.ownHero.numAttacksThisTurn == 1)) && !p.ownHero.frozen)
                 {
-
+                    return 0;
                 }
                 else
                 {
@@ -2003,12 +2006,12 @@
 
             if (name == CardDB.cardName.frothingberserker)
             {
-                if (p.cardsPlayedThisTurn >= 1) pen = 5;
+                if (p.cardsPlayedThisTurn >= 1) return 5;
             }
 
             if (name == CardDB.cardName.handofprotection)
             {
-                if (m.Hp == 1) pen = 15;
+                if (m.Hp == 1) return 15;
             }
 
             if (lethal)
@@ -2072,15 +2075,6 @@
 
             }
 
-
-
-            if (name == CardDB.cardName.knifejuggler)
-            {
-                if (p.mobsplayedThisTurn >= 1)
-                {
-                    return 20;
-                }
-            }
 
             if ((name == CardDB.cardName.polymorph || name == CardDB.cardName.hex))
             {
@@ -2150,15 +2144,15 @@
 
             if (name == CardDB.cardName.innerfire)
             {
-                if (m.name == CardDB.cardName.lightspawn) pen = 500;
+                if (m.name == CardDB.cardName.lightspawn) return 500;
             }
 
             if (name == CardDB.cardName.huntersmark)
             {
-                if (target.own && !target.isHero) pen = 500; // dont use on own minions
+                if (target.own && !target.isHero) return 500; // dont use on own minions
                 if (!target.own && !target.isHero && (target.Hp <= 4) && target.Angr <= 4) // only use on strong minions
                 {
-                    pen = 20;
+                    return 20;
                 }
             }
 
@@ -2167,23 +2161,20 @@
             {
                 if (target != null)
                 {
-                    if (target.own) pen = 500; // dont use on own minions
-                    if (!target.own && target.Angr <= 3) // only use on strong minions
-                    {
-                        pen = 30;
-                    }
-                    if (m.name == CardDB.cardName.lightspawn) pen = 500;
+                    if (target.own || m.name == CardDB.cardName.lightspawn) return 500; // dont use on own minions
+                    if (target.Angr <= 3) return 30;  // only use on strong minions
+                    return 0;
                 }
                 else
                 {
-                    pen = 50;
+                    return 50;
                 }
             }
 
 
 
-            if (name == CardDB.cardName.defiasringleader && p.cardsPlayedThisTurn == 0)
-            { pen = 10; }
+            if (name == CardDB.cardName.defiasringleader && p.cardsPlayedThisTurn == 0) return 10;
+
             if (name == CardDB.cardName.bloodknight)
             {
                 int shilds = 0;
@@ -2203,7 +2194,7 @@
                 }
                 if (shilds == 0)
                 {
-                    pen = 10;
+                    return 10;
                 }
             }
             if (name == CardDB.cardName.direwolfalpha)
@@ -2214,8 +2205,7 @@
                     if (min.Ready)
                     { ready++; }
                 }
-                if (ready == 0)
-                { pen = 5; }
+                if (ready == 0) return 5;
             }
             if (name == CardDB.cardName.abusivesergeant)
             {
@@ -2227,7 +2217,7 @@
                 }
                 if (ready == 0)
                 {
-                    pen = 5;
+                    return 5;
                 }
             }
 
