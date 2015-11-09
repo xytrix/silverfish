@@ -111,7 +111,7 @@
 
             foreach (Minion m in p.ownMinions)
             {
-                retval += m.Hp * 1;
+                retval += (m.Angr < 4 ? m.Hp * 1 : m.Hp * 2);
                 retval += m.Angr * 2;
                 retval += m.handcard.card.rarity;
                 if (m.windfury) retval += m.Angr;
