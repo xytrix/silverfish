@@ -2061,7 +2061,7 @@
                 {
                     // first damage to your hero is nulled -> lower guessingHeroDamage
                     List<Minion> temp = new List<Minion>(this.enemyMinions);
-                    temp.Sort((a, b) => -a.Angr.CompareTo(b.Angr));//take the strongest
+                    temp.Sort((a, b) => a.Angr.CompareTo(b.Angr));//take the weakest
                     if (temp.Count == 0) continue;
                     Minion m = temp[0];
                     m.Angr = 0;
