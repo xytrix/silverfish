@@ -41,26 +41,19 @@
             //posmoves[0].prepareNextTurn(false);
             List<Playfield> temp = new List<Playfield>();
             int deep = 0;
-            int enemMana = rootfield.enemyMaxMana;
 
-            if (print)
-            { Console.WriteLine("enemMana "+ enemMana); }
             //playing aoe-effects if activated (and we didnt play loatheb)
             if (playaround && rootfield.ownloatheb == 0)
             {
-                float oldval = Ai.Instance.botBase.getPlayfieldValueEnemy(posmoves[0]);
-                posmoves[0].value = int.MinValue;
-                enemMana = posmoves[0].EnemyCardPlaying(rootfield.enemyHeroName, enemMana, rootfield.enemyAnzCards, pprob, pprob2);
-                float newval = Ai.Instance.botBase.getPlayfieldValueEnemy(posmoves[0]);
-                posmoves[0].value = int.MinValue;
-                posmoves[0].enemyAnzCards--;
-                posmoves[0].triggerCardsChanged(false);
-                posmoves[0].mana = enemMana;
-                if (oldval < newval)
-                {
-                    posmoves.Clear();
-                    posmoves.Add(new Playfield(rootfield));
-                }
+                Playfield aoeField = new Playfield(rootfield);
+                float oldval = Ai.Instance.botBase.getPlayfieldValue(aoeField);
+                aoeField.value = int.MinValue;
+                aoeField.mana = aoeField.EnemyCardPlaying(rootfield.enemyHeroName, rootfield.mana, rootfield.enemyAnzCards, pprob, pprob2);
+                float newval = Ai.Instance.botBase.getPlayfieldValue(aoeField);
+                aoeField.value = int.MinValue;
+                aoeField.enemyAnzCards--;
+                aoeField.triggerCardsChanged(false);
+                if (oldval > newval) posmoves.Add(aoeField);
             }
 
 

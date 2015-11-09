@@ -1314,15 +1314,6 @@
             int mana = currmana;
             if (cardcount == 0) return currmana;
 
-            bool useAOE = false;
-            int mobscount = 0;
-            foreach (Minion min in this.ownMinions)
-            {
-                if (min.maxHp >= 2 && min.Angr >= 2) mobscount++;
-            }
-
-            if (mobscount >= 3) useAOE = true;
-
             if (enemyHeroNamee == HeroEnum.warrior)
             {
                 bool usewhirlwind = true;
@@ -1337,8 +1328,6 @@
                     mana = EnemyPlaysACard(CardDB.cardName.whirlwind, mana, playAroundProb, pap2);
                 }
             }
-
-            if (!useAOE) return mana;
 
             if (enemyHeroNamee == HeroEnum.mage)
             {
