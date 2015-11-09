@@ -16,7 +16,7 @@
 
             retval += p.ownMaxMana * 15 - p.enemyMaxMana * 15;
 
-            if (p.ownWeaponAttack >= 1)
+            if (p.ownWeaponAttack >= 1 && !p.ownHero.frozen)
             {
                 retval += p.ownWeaponAttack * p.ownWeaponDurability;
             }
