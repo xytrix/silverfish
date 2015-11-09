@@ -859,15 +859,24 @@
                 if (mheal <= 7 && wounded <= 2) return 20;
             }
 
-            if (HealTargetDatabase.ContainsKey(name))
+            if (HealTargetDatabase.ContainsKey(name) || HealHeroDatabase.ContainsKey(name))
             {
+                if (HealHeroDatabase.ContainsKey(name))
+                {
+                    target = p.ownHero;
+                    heal = HealHeroDatabase[name];
+                }
+                else
+                {
                 if (target == null) return 10;
                 //Helpfunctions.Instance.ErrorLog("pencheck for " + name + " " + target.entitiyID + " " + target.isHero  + " " + target.own);
                 heal = HealTargetDatabase[name];
+                }
+
                 if (target.isHero && !target.own) return 510; // dont heal enemy
                 //Helpfunctions.Instance.ErrorLog("pencheck for " + name + " " + target.entitiyID + " " + target.isHero + " " + target.own);
                 if ((target.isHero && target.own) && p.ownHero.Hp == 30) return 150;
-                if ((target.isHero && target.own) && p.ownHero.Hp + heal - 1 > 30) pen = p.ownHero.Hp + heal - 30;
+                if ((target.isHero && target.own) && p.ownHero.Hp + heal > 30) pen = p.ownHero.Hp + heal - 30;
                 Minion m = new Minion();
 
                 if (!target.isHero && target.own)
