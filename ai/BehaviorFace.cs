@@ -138,6 +138,7 @@
                 {
                     retval += 50;//10000
                     if (p.numPlayerMinionsAtTurnStart == 0) retval += 50; // if we can kill the enemy even after a board clear, bigger bonus
+                    if (p.loathebLastTurn > 0) retval += 50;  // give a bonus to turn 2 sims where we played loatheb in turn 1 to protect our lethal board
                 }
             }
             //soulfire etc

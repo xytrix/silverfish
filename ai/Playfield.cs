@@ -206,6 +206,7 @@
 
         public int ownloatheb = 0;
         public int enemyloatheb = 0;
+        public int loathebLastTurn = 0;  // only checked for turn 2 bonus
 
         public int pintsizedsummoner = 0;
         public int managespenst = 0;
@@ -2397,6 +2398,7 @@
                 this.playedmagierinderkirintor = false;
 
                 this.weHavePlayedMillhouseManastorm = false;
+                this.loathebLastTurn = this.ownloatheb;
                 this.ownloatheb = 0;
                 this.ownSaboteur = 0;
                 
