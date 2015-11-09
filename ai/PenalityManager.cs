@@ -1048,7 +1048,6 @@
             bool hasknife = false;
             bool hasflamewaker = false;
             bool hasmech = false;
-            bool hadkn = false;
 
             
 
@@ -1110,9 +1109,6 @@
 
             }
 
-            // Don't penalize for cases that don't actually have random outcomes
-            // TODO: Add Lightning Storm + Elemental Destruction if all enemies hp < the minimum damage?
-
             if (!this.randomEffects.ContainsKey(card.name) 
                 && !this.cardDrawBattleCryDatabase.ContainsKey(card.name) 
                 && !(hasknife && card.type == CardDB.cardtype.MOB && p.enemyMinions.Count > 0) 
@@ -1123,15 +1119,15 @@
                  return 0;
              }
 
+            // Don't penalize for cases that don't actually have random outcomes
+            // TODO: Add Lightning Storm + Elemental Destruction if all enemies hp < the minimum damage?
 
-            //brawl should be used first
-            if (card.name == CardDB.cardName.brawl)
+            if (card.name == CardDB.cardName.brawl || ((card.name == CardDB.cardName.bouncingblade && p.enemyMinions.Count + p.ownMinions.Count == 1)
+                || (card.name == CardDB.cardName.goblinblastmage && !hasmech)
+                || (card.name == CardDB.cardName.coghammer && p.ownMinions.Count == 1)))
             {
                 return 0;
             }
-
-            // Don't penalize for cases that don't actually have random outcomes
-            // TODO: Add Lightning Storm + Elemental Destruction if all enemies hp < the minimum damage?
 
             if (p.enemyMinions.Count == 2 && (card.name == CardDB.cardName.cleave
                 || card.name == CardDB.cardName.multishot
