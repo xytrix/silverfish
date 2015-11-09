@@ -241,7 +241,7 @@
                     retval += m.Angr * 2;
                     if (m.windfury) retval += 2 * m.Angr;
                 }
-                if (m.taunt) retval += 5;
+                if (m.taunt && m.Angr > 0) retval += 5;
                 if (m.divineshild) retval += m.Angr;
                 if (m.frozen) retval -= 1; // because its bad for enemy :D
                 if (m.poisonous) retval += 4;
