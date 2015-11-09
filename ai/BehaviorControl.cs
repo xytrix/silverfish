@@ -72,7 +72,8 @@
             }
             else
             {
-                retval += p.owncarddraw * 5;
+                // value card draw this turn > card draw next turn (the sooner the better)
+                retval += (p.turnCounter < 2 ? p.owncarddraw * 5 : p.owncarddraw * 3);
             }
 
             //retval += p.owncarddraw * 5;
