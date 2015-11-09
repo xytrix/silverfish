@@ -2272,8 +2272,9 @@
             }
 
             
+            bool hasHighHealthMinion = false;
 
-            if (c.name == CardDB.cardName.flare)
+            if (c.name == CardDB.cardName.flare || c.name == CardDB.cardName.kezanmystic)
             {
                 if (p.playactions.Count >= 1) return 100;
                 return 0;
@@ -2282,11 +2283,15 @@
             {
                 foreach (Handmanager.Handcard hc in p.owncards)
                 {
-                    if (hc.card.name == CardDB.cardName.flare) return 100 * p.enemySecretCount;
+                    if (hc.card.name == CardDB.cardName.flare && hc.canplayCard(p)) return 100 * p.enemySecretCount;
+                    if (hc.card.name == CardDB.cardName.kezanmystic && hc.canplayCard(p)) return 50;
+
+                    if (hc.card.type == CardDB.cardtype.MOB && hc.card.Health > 4 && hc.canplayCard(p)) hasHighHealthMinion = true;
                 }
             }
 
             int attackedbefore = 0;
+            int canattack = 0;
 
             foreach (Minion mnn in p.ownMinions)
             {
@@ -2294,15 +2299,20 @@
                 {
                     attackedbefore++;
                 }
+                if (mnn.Ready && mnn.Angr > 0 && !mnn.frozen)
+                {
+                    canattack++;
+                }
             }
 
-
-
+            // only penalize for playing cards if we have better options
             if (p.enemyHeroName == HeroEnum.hunter)
             {
-                if (c.type == CardDB.cardtype.MOB && (attackedbefore == 0 || c.Health <= 4 )) //|| (p.enemyHero.Hp >= p.enemyHeroHpStarted && attackedbefore >= 1)))
+                if (c.type == CardDB.cardtype.MOB)
                 {
-                    pen += 10;
+                    if (attackedbefore == 0 && canattack > 0) pen += 10;
+                    if (c.Health <= 4 && hasHighHealthMinion) pen += 10;
+                    if (c.Health <= 4 && c.deathrattle && c.name != CardDB.cardName.darnassusaspirant && c.name != CardDB.cardName.dancingswords) pen -= 5;
                 }
             }
 
@@ -2327,10 +2337,11 @@
                     }
                 }
 
-                if (c.type == CardDB.cardtype.SPELL && p.cardsPlayedThisTurn == p.mobsplayedThisTurn)
-                {
-                    pen += 10;
-                }
+                // should not penalize playing spells unless 1) we know we have other options, and 2) we know it's a high value spell
+                //if (c.type == CardDB.cardtype.SPELL && p.cardsPlayedThisTurn == p.mobsplayedThisTurn)
+                //{
+                //    pen += 10;
+                //}
             }
 
             if (p.enemyHeroName == HeroEnum.pala)
@@ -2345,7 +2356,7 @@
                         taunt = c.tank,
                         name = c.name
                     };
-                    if ((!this.isOwnLowestInHand(m, p) && p.mobsplayedThisTurn == 0) || attackedbefore == 0)
+                    if ((!this.isOwnLowestInHand(m, p) && p.mobsplayedThisTurn == 0) || (attackedbefore == 0 && canattack > 0))
                     {
                         pen += 10;
                     }
@@ -2364,7 +2375,8 @@
 
             foreach (Handmanager.Handcard hc in p.owncards)
             {
-                if (hc.card.name == CardDB.cardName.flare) return 100 * p.enemySecretCount;
+                if (hc.card.name == CardDB.cardName.flare && hc.canplayCard(p)) return 100 * p.enemySecretCount;
+                if (hc.card.name == CardDB.cardName.kezanmystic && hc.canplayCard(p)) return 50;
             }
 
             int pen = 0;
@@ -2413,7 +2425,10 @@
 
                 if (!target.own && !target.isHero && attackedbefore == 0)
                 {
-                    if (!isEnemyLowest(target, p) || m.Hp <= 2) pen += 5;
+                    bool isEnemLow = isEnemyLowest(target, p);
+                    if (!isEnemLow || m.Hp <= 2) pen += 5;
+                    if (isEnemLow) pen -= 5;  // encourage attacking weakest enemy
+                    if (m.Hp > 2) pen -= 5;
                 }
 
                 if (target.isHero && !target.own && !islow)
@@ -2503,7 +2518,7 @@
             bool ret = false;
             foreach (Minion m in p.ownMinions)
             {
-                if (m.Hp <= 2 && (m.Ready || this.priorityDatabase.ContainsKey(m.name))) ret = true;
+                if (m.Hp <= 2 && ((m.Ready && m.Angr > 0 && !m.frozen) || this.priorityDatabase.ContainsKey(m.name))) ret = true;
             }
             return ret;
         }
