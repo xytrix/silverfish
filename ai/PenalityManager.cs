@@ -980,6 +980,12 @@
                 if (carddraw == 0) return 15;
             }
 
+            if (name == CardDB.cardName.tinkertowntechnician)
+            {
+                carddraw = (p.ownMinions.Find(m => m.handcard.card.race == TAG_RACE.MECHANICAL) != null ? 1 : 0);
+                if (carddraw == 0) return 2;
+            }
+
             if (name == CardDB.cardName.lifetap)
             {
                 if (lethal) return 500; //RR no benefit for lethal check
@@ -1134,7 +1140,7 @@
             // TODO: Add Lightning Storm + Elemental Destruction if all enemies hp < the minimum damage?
 
             if (card.name == CardDB.cardName.brawl || ((card.name == CardDB.cardName.bouncingblade && p.enemyMinions.Count + p.ownMinions.Count == 1)
-                || (card.name == CardDB.cardName.goblinblastmage && !hasmech)
+                || ((card.name == CardDB.cardName.goblinblastmage || card.name == CardDB.cardName.tinkertowntechnician) && !hasmech)
                 || (card.name == CardDB.cardName.coghammer && p.ownMinions.Count == 1)))
             {
                 return pen;
@@ -2862,6 +2868,9 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.ambush, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.soultap, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.lockandload, 1);
+
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.tinkertowntechnician, 1); // if we have a mech
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.toshley, 1);
         }
 
         private void setupDiscardCards()
