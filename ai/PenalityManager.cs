@@ -3236,16 +3236,27 @@
             priorityTargets.Add(CardDB.cardName.shadeofnaxxramas, 10);
             priorityTargets.Add(CardDB.cardName.undertaker, 4);
 
+            //GVG
+            this.priorityTargets.Add(CardDB.cardName.ironsensei, 6);
+            this.priorityTargets.Add(CardDB.cardName.mechwarper, 4);
+            this.priorityTargets.Add(CardDB.cardName.malganis, 10);
+            this.priorityTargets.Add(CardDB.cardName.vitalitytotem, 4);
+            this.priorityTargets.Add(CardDB.cardName.gahzrilla, 10);
+            this.priorityTargets.Add(CardDB.cardName.steamwheedlesniper, 5);
+            this.priorityTargets.Add(CardDB.cardName.floatingwatcher, 6);
+            this.priorityTargets.Add(CardDB.cardName.micromachine, 4);
+            this.priorityTargets.Add(CardDB.cardName.hobgoblin, 5);
+            this.priorityTargets.Add(CardDB.cardName.mogortheogre, 10);
+            this.priorityTargets.Add(CardDB.cardName.foereaper4000, 10);
+            this.priorityTargets.Add(CardDB.cardName.troggzortheearthinator, 10);
 
+            //BRM
             this.priorityTargets.Add(CardDB.cardName.flamewaker, 5);
             this.priorityTargets.Add(CardDB.cardName.impgangboss, 5);
             this.priorityTargets.Add(CardDB.cardName.grimpatron, 10);
             this.priorityTargets.Add(CardDB.cardName.dragonkinsorcerer, 4);
             this.priorityTargets.Add(CardDB.cardName.emperorthaurissan, 10);
             this.priorityTargets.Add(CardDB.cardName.chromaggus, 10);
-
-
-            //this.priorityTargets.Add(CardDB.cardName.quartermaster, 5);  // battlecry already used when on the field, no need for additional penalty
 
             //TGT
             this.priorityTargets.Add(CardDB.cardName.muklaschampion, 10);
@@ -3261,7 +3272,6 @@
             this.priorityTargets.Add(CardDB.cardName.murlocknight, 10);
             this.priorityTargets.Add(CardDB.cardName.holychampion, 5);
             this.priorityTargets.Add(CardDB.cardName.wilfredfizzlebang, 10);
-
 
         }
 
@@ -3372,7 +3382,8 @@
             this.silenceTargets.Add(CardDB.cardName.voidcaller, 0);
             this.silenceTargets.Add(CardDB.cardName.webspinner, 0);
 
-
+            this.silenceTargets.Add(CardDB.cardName.ironsensei, 0);
+            this.silenceTargets.Add(CardDB.cardName.vitalitytotem, 0);
             this.silenceTargets.Add(CardDB.cardName.malganis, 0);
             this.silenceTargets.Add(CardDB.cardName.malorne, 0);
             this.silenceTargets.Add(CardDB.cardName.gahzrilla, 0);
