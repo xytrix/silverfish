@@ -40,6 +40,7 @@
 
         private static int instanceId = 0;
         public int id = 0;  // for easier debugging
+        public List<int> parentIds = new List<int>();
         public bool logging = false;
         public bool complete = false;
 
@@ -639,6 +640,10 @@
         public Playfield(Playfield p)
         {
             this.id = ++instanceId;
+#if DEBUG
+            this.parentIds.AddRange(p.parentIds);
+            this.parentIds.Add(p.id);
+#endif
             this.isServer = p.isServer;
             this.nextEntity = p.nextEntity;
             this.randomGenerator = randomGeneratorInstance;
@@ -6210,6 +6215,14 @@
             }
         }
 
+        private string getParentIds()
+        {
+            string parentString = "";
+            foreach (int parent in this.parentIds) parentString += parent + ".";
+            parentString += this.id;
+            return parentString;
+        }
+
         public void printBoard(int boardnumber = -1)
         {
             float copy = value;
@@ -6221,7 +6234,11 @@
             {
                 Helpfunctions.Instance.logg("board: " + value + " ++++++++++++++++++++++");
             }
+#if DEBUG
+            Helpfunctions.Instance.logg("id: " + getParentIds());
+#else
             Helpfunctions.Instance.logg("id: " + this.id);
+#endif
             Helpfunctions.Instance.logg("pen " + this.evaluatePenality);
             Helpfunctions.Instance.logg("mana " + this.mana + "/" + this.ownMaxMana + " turnEndMana " + this.manaTurnEnd);
             Helpfunctions.Instance.logg("cardsplayed: " + this.cardsPlayedThisTurn + " handsize: " + this.owncards.Count + " eh " + this.enemyAnzCards + " " + this.enemycarddraw);
