@@ -509,7 +509,7 @@ namespace HREngine.Bots
                 //  AI has requested to ignore this update, so return without setting any actions.
                 if (!shouldSendActions)
                 {
-                    Helpfunctions.Instance.ErrorLog("shouldsendactionsblah");
+                    //Helpfunctions.Instance.ErrorLog("shouldsendactionsblah");
                     shouldSendActions = true;  // unpause ourselves for next time
                     return;
                 }
@@ -564,7 +564,7 @@ namespace HREngine.Bots
 
                     do
                     {
-                        Helpfunctions.Instance.ErrorLog("play action...1");
+                        Helpfunctions.Instance.ErrorLog("play action..." + (e.action_list.Count() + 1));
                         Action moveTodo = Ai.Instance.bestmove;
 
                         if (!hasMoreActions && (moveTodo == null || moveTodo.actionType == actionEnum.endturn))
@@ -576,8 +576,6 @@ namespace HREngine.Bots
                         }
                         else
                         {
-
-                            Helpfunctions.Instance.ErrorLog("play action");
                             moveTodo.print();
 
                             BotAction nextMove = ConvertToRangerAction(moveTodo);
