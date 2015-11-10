@@ -1046,6 +1046,8 @@
 
         private int getRandomPenaltiy(CardDB.Card card, Playfield p, Minion target)
         {
+            int pen = 0;
+
             if (p.turnCounter >= 1)
             {
                 return 0;
@@ -1097,22 +1099,22 @@
                         continue;
                     if (a.own.name == CardDB.cardName.gadgetzanauctioneer)
                     {
-                        if (!hasgadget && p.owncards.Count <=5) return 10;
+                        if (!hasgadget && card.type == CardDB.cardtype.SPELL && p.owncards.Count <=5) pen += 10;
                     }
 
                     if (a.own.name == CardDB.cardName.starvingbuzzard)
                     {
-                        if (!hasstarving && card.race == TAG_RACE.PET) return 10; 
+                        if (!hasstarving && card.race == TAG_RACE.PET) pen += 10; 
                     }
 
                     if (a.own.name == CardDB.cardName.knifejuggler)
                     {
-                        if (!hasknife && card.type == CardDB.cardtype.MOB) return 10; 
+                        if (!hasknife && card.type == CardDB.cardtype.MOB) pen += 10; 
                     }
 
                     if (a.own.name == CardDB.cardName.flamewaker)
                     {
-                        if (!hasflamewaker && card.type == CardDB.cardtype.SPELL) return 10; 
+                        if (!hasflamewaker && card.type == CardDB.cardtype.SPELL) pen += 10; 
                     }
                 }
 
@@ -1125,7 +1127,7 @@
                 && !(hasflamewaker && card.type == CardDB.cardtype.SPELL && p.enemyMinions.Count > 0)
                 && !(hasstarving && (TAG_RACE)card.race == TAG_RACE.PET))
              {
-                 return 0;
+                 return pen;
              }
 
             // Don't penalize for cases that don't actually have random outcomes
@@ -1135,7 +1137,7 @@
                 || (card.name == CardDB.cardName.goblinblastmage && !hasmech)
                 || (card.name == CardDB.cardName.coghammer && p.ownMinions.Count == 1)))
             {
-                return 0;
+                return pen;
             }
 
             if (p.enemyMinions.Count == 2 && (card.name == CardDB.cardName.cleave
@@ -1143,14 +1145,14 @@
                 || card.name == CardDB.cardName.forkedlightning
                 || card.name == CardDB.cardName.darkbargain))
              {
-                 return 0;
+                 return pen;
              }
 
             if (p.enemyMinions.Count == 1 && (card.name == CardDB.cardName.deadlyshot
                 || card.name == CardDB.cardName.flamecannon
                 || card.name == CardDB.cardName.bomblobber))
              {
-                 return 0;
+                 return pen;
              }
 
             if (p.enemyMinions.Count == 0 && (card.name == CardDB.cardName.arcanemissiles 
@@ -1158,7 +1160,7 @@
                 || card.name == CardDB.cardName.goblinblastmage
                 || card.name == CardDB.cardName.flamejuggler))
              {
-                 return 0;
+                 return pen;
              }
 
             int cards = 0;
@@ -1235,10 +1237,10 @@
 
             if (first == false)
             {
-                return cards + p.playactions.Count + 1;
+                pen += cards + p.playactions.Count + 1;
             }
 
-            return 0;
+            return pen;
         }
 
         private int getCardDiscardPenality(CardDB.cardName name, Playfield p)
