@@ -1639,6 +1639,11 @@
 
             }
 
+            // spare parts need a base penalty so the bot does not waste them
+            // TODO: move this a better location, and break reversing switch into atk buff and hp buff components
+            if (name == CardDB.cardName.finickycloakfield || name == CardDB.cardName.emergencycoolant || name == CardDB.cardName.reversingswitch)
+                return 20;
+
             if (name == CardDB.cardName.flare) 
             {
                 if (p.enemyHeroName != HeroEnum.hunter && p.enemyHeroName != HeroEnum.mage && p.enemyHeroName == HeroEnum.pala) return 0;
