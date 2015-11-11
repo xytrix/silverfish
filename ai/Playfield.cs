@@ -6198,6 +6198,37 @@
             return ret;
         }
 
+        public Minion searchRandomMinionForDamage(List<Minion> enemies, int damage, bool ownPlay, bool includeEnemyHero)
+        {
+            // own = true -> search for us the worst-case scenario (i.e. random target = enemy's lowest atk minion that doesn't die)
+            // own = false -> search for enemy the best-case scenario (i.e. random target = our highest atk minion that can die)
+            Minion targetHero = (ownPlay ? this.enemyHero : this.ownHero);
+            Minion selected = (includeEnemyHero ? targetHero : null);
+
+            if (enemies.Count == 0) return selected;
+            if (includeEnemyHero && !ownPlay && damage >= this.ownHero.Hp) return this.ownHero;  // best-case for enemy: if it can kill us, it will
+
+            List<Minion> temp = new List<Minion>(enemies);
+            if (ownPlay)
+                temp.Sort((a, b) => a.Angr.CompareTo(b.Angr)); // increasing Atk
+            else
+                temp.Sort((a, b) => -a.Angr.CompareTo(b.Angr)); // decreasing Atk
+
+            Minion firstAlive = null;
+            foreach (Minion m in temp)
+            {
+                if (m.Hp <= 0) continue;
+                if (firstAlive == null) firstAlive = m;
+
+                if ((ownPlay && m.Hp > damage) || (!ownPlay && m.Hp <= damage))
+                    return m;
+            }
+
+            if (includeEnemyHero && ownPlay && damage < this.enemyHero.Hp - 15) return this.enemyHero;  // worst-case for us: no minions damaged
+
+            // no minions found = all ours live or all enemies die (so just return the first one, highest/lowest atk)
+            return (firstAlive == null ? targetHero : firstAlive);
+        }
 
         public void debugMinions()
         {
@@ -6739,34 +6770,10 @@
             }
         }
 
-        public void doDmgToRandomEnemyCLIENT(int dmg, bool targetHero, bool side)
+        public void doDmgToRandomEnemyCLIENT(int dmg, bool targetHero, bool ownPlay)
         {
-            //TODO
-            if (!targetHero)
-            {
-                Minion m = this.searchRandomMinion((side) ? this.ownMinions : this.enemyMinions, Playfield.searchmode.searchHighestHP);
-                if (m != null) this.minionGetDamageOrHeal(m, dmg);
-            }
-            else
-            {
-                Minion m = this.searchRandomMinion((side) ? this.ownMinions : this.enemyMinions, Playfield.searchmode.searchHighestHP);
-                if (m != null)
-                {
-                    int hp = (side) ? this.ownHero.Hp : this.enemyHero.Hp;
-                    if (m.Hp <= dmg && hp-5 > dmg)
-                    {
-                        this.minionGetDamageOrHeal((side) ? this.ownHero : this.enemyHero, dmg);
-                    }
-                    else
-                    {
-                        this.minionGetDamageOrHeal(m, dmg);
-                    }
-                }
-                else
-                {
-                    this.minionGetDamageOrHeal((side) ? this.ownHero : this.enemyHero, dmg);
-                }
-            }
+            Minion m = this.searchRandomMinionForDamage((ownPlay ? this.enemyMinions : this.ownMinions), dmg, ownPlay, targetHero);
+            if (m != null) this.minionGetDamageOrHeal(m, dmg);
         }
     }
 

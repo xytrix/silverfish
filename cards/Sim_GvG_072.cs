@@ -19,15 +19,8 @@ namespace HREngine.Bots
             }
             else
             {
-                Minion t = p.searchRandomMinion((triggerEffectMinion.own) ? p.enemyMinions : p.ownMinions, Playfield.searchmode.searchHighestHP);
-                if (t != null)
-                {
-                    p.minionGetDamageOrHeal(t, 1);
-                }
-                else
-                {
-                    p.minionGetDamageOrHeal((triggerEffectMinion.own) ? p.enemyHero : p.ownHero, 1);
-                }
+                Minion t = p.searchRandomMinionForDamage((triggerEffectMinion.own ? p.enemyMinions : p.ownMinions), 1, triggerEffectMinion.own, true);
+                p.minionGetDamageOrHeal(t, 1);
             }
         }
 

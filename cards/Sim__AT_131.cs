@@ -20,7 +20,7 @@ namespace HREngine.Bots
                     return;
                 }
 
-                p.doDmgToRandomEnemyCLIENT(3, true, !triggerEffectMinion.own);
+                p.doDmgToRandomEnemyCLIENT(3, true, triggerEffectMinion.own);
             }
         }
 
