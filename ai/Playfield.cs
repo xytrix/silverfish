@@ -1964,10 +1964,18 @@
             return bestplace + 1;
         }
 
-        public void guessHeroDamage()
+        public int guessHeroDamage(bool own = false)
         {
+            List<Minion> attackingMinions = (own ? this.ownMinions : this.enemyMinions);
+            Minion attackingHero = (own ? this.ownHero : this.enemyHero);
+            HeroEnum attackingHeroName = (own ? this.ownHeroName : this.enemyHeroName);
+            int weaponAttack = (own ? this.ownWeaponAttack : this.enemyWeaponAttack);
+            CardDB.cardName weaponName = (own ? this.ownWeaponName : this.enemyWeaponName);
+            List<Minion> targetMinions = (own ? this.enemyMinions : this.ownMinions);
+            Minion targetHero = (own ? this.enemyHero : this.ownHero);
+
             int ghd = 0;
-            foreach (Minion m in this.enemyMinions)
+            foreach (Minion m in attackingMinions)
             {
                 if (m.frozen) continue;
                 if (m.name == CardDB.cardName.ancientwatcher && !m.silenced)
@@ -1978,33 +1986,36 @@
                 if (m.windfury) ghd += m.Angr;
             }
 
-            if (!this.enemyHero.frozen)
+            if (!attackingHero.frozen)
             {
-                if (this.enemyWeaponAttack >= 1)
+                if (weaponAttack >= 1)
                 {
-                    ghd += enemyWeaponAttack;
-                    if (this.enemyHero.windfury || this.enemyWeaponName == CardDB.cardName.doomhammer) ghd += enemyWeaponAttack;
+                    ghd += weaponAttack;
+                    if (attackingHero.windfury || weaponName == CardDB.cardName.doomhammer) ghd += weaponAttack;
                 }
                 else
                 {
-                    if (this.enemyHeroName == HeroEnum.druid) ghd++;
-                    if (this.enemyHeroName == HeroEnum.thief) ghd++;
+                    if (attackingHeroName == HeroEnum.thief) ghd++;
                 }
+
+                if (attackingHeroName == HeroEnum.druid) ghd++;
             }
 
-            if (this.enemyHeroName == HeroEnum.mage) ghd++;
-            if (this.enemyHeroName == HeroEnum.hunter) ghd += 2;
+            if (attackingHeroName == HeroEnum.mage) ghd++;
+            if (attackingHeroName == HeroEnum.hunter) ghd += 2;
 
 
-            foreach (Minion m in this.ownMinions)
+            foreach (Minion m in targetMinions)
             {
                 if (m.taunt) ghd -= m.Hp;
                 if (m.taunt && m.divineshild) ghd -= 1;
             }
 
             int guessingHeroDamage = Math.Max(0, ghd);
-            if (this.ownHero.immune) guessingHeroDamage = 0;
+            if (targetHero.immune) guessingHeroDamage = 0;
             //this.guessingHeroHP = this.ownHero.Hp + this.ownHero.armor - guessingHeroDamage;
+
+            return guessingHeroDamage;
         }
 
         public void simulateTraps()

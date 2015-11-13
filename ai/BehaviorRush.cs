@@ -179,6 +179,12 @@ namespace HREngine.Bots
                     if (p.loathebLastTurn > 0) retval += 50;  // give a bonus to turn 2 sims where we played loatheb in turn 1 to protect our lethal board
                 }
             }
+            else if (p.ownHero.Hp > 0)
+            {
+                // if our damage on board is lethal, give a strong bonus so enemy AI avoids this outcome in its turn (i.e. AI will clear our minions if it can instead of ignoring them)
+                if (p.turnCounter == 1 && p.guessHeroDamage(true) >= p.enemyHero.Hp + p.enemyHero.armor) retval += 100;
+            }
+
             //soulfire etc
             int deletecardsAtLast = 0;
             foreach (Action a in p.playactions)
