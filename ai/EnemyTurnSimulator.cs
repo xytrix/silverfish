@@ -229,7 +229,7 @@
                 bestplay.printBoard();
             }
             rootfield.value = bestplay.value;
-            if (simulateTwoTurns && bestplay.value > -1000)
+            if (simulateTwoTurns && bestplay.ownHero.Hp > 0 && bestplay.value > -1000)
             {
                 bestplay.prepareNextTurn(true);
                 rootfield.value = Settings.Instance.firstweight * bestval + Settings.Instance.secondweight * Ai.Instance.nextTurnSimulator[this.thread].doallmoves(bestplay, false, print);
