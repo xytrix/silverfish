@@ -97,7 +97,11 @@ namespace HREngine.Bots
         public float firstweight = 0.5f;
         public float secondweight = 0.5f;
 
+#if DEBUG
+        public int numberOfThreads = 1;
+#else
         public int numberOfThreads = Environment.ProcessorCount;//32;//
+#endif
         public bool useSecretsPlayArround = false;
 
         public bool simulatePlacement = true;
