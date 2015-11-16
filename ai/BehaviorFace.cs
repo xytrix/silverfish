@@ -16,6 +16,12 @@ namespace HREngine.Bots
             retval += p.ownHero.Hp + p.ownHero.armor;
             retval += -3*(p.enemyHero.Hp + p.enemyHero.armor);
 
+            // when enemy hp is low, we need more face
+            if (p.enemyHero.Hp + p.enemyHero.armor < 15)
+            {
+                retval += 2*(15 - p.enemyHero.Hp - p.enemyHero.armor);
+            }
+
             retval += p.ownMaxMana * 15 - p.enemyMaxMana * 15;
 
             if (p.ownWeaponAttack >= 1 && !p.ownHero.frozen)
