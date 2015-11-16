@@ -474,6 +474,10 @@
                             if (anz > 0) p.minionGetBuffed(m, 2, 0);
                             break;
                         }
+
+                    case CardDB.cardName.cogmaster:
+                        if (p.enemyAnzCards >= 2 && m.Angr == 1) p.minionGetBuffed(m, 2, 0);
+                        break;
                 }
             }
 
