@@ -986,7 +986,7 @@
                 if (carddraw == 0) return 2;
             }
 
-            if (name == CardDB.cardName.lifetap)
+            if (name == CardDB.cardName.lifetap || name == CardDB.cardName.soultap)
             {
                 if (lethal) return 500; //RR no benefit for lethal check
                 int minmana = 10;
@@ -1646,7 +1646,7 @@
 
             if (name == CardDB.cardName.flare) 
             {
-                if (p.enemyHeroName != HeroEnum.hunter && p.enemyHeroName != HeroEnum.mage && p.enemyHeroName == HeroEnum.pala) return 0;
+                if (p.enemyHeroName != HeroEnum.hunter && p.enemyHeroName != HeroEnum.mage && p.enemyHeroName != HeroEnum.pala) return 0;
                 //it is a hunter/mage or pala:
                 if (p.enemySecretCount == 0) return 50;
                 if (p.enemySecretCount >= 1 && p.playactions.Count == 0)  return -10;
@@ -2830,7 +2830,7 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.grovetender, 1); //choice = 2
 
             cardDrawBattleCryDatabase.Add(CardDB.cardName.ancientteachings, 2);
-
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.flare, 1);
 
 
             cardDrawBattleCryDatabase.Add(CardDB.cardName.excessmana, 1);
@@ -2841,7 +2841,7 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.harrisonjones, 0);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.noviceengineer, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.roguesdoit, 1);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.arcaneintellect, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.arcaneintellect, 2);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.hammerofwrath, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.holywrath, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.layonhands, 3);
@@ -2860,7 +2860,7 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.divinefavor, 1);//only if enemy has more cards than you
 
             cardDrawBattleCryDatabase.Add(CardDB.cardName.neptulon, 4);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.gnomishexperimenter, 4);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.gnomishexperimenter, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.unstableportal, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.callpet, 1);
 
@@ -2868,11 +2868,12 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.nexuschampionsaraad, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.spellslinger, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.burgle, 1);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.ancestralknowledge, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.ancestralknowledge, 2);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.varianwrynn, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.ambush, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.soultap, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.lockandload, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.kingselekk, 1);  // only if we win joust
 
             cardDrawBattleCryDatabase.Add(CardDB.cardName.tinkertowntechnician, 1); // if we have a mech
             cardDrawBattleCryDatabase.Add(CardDB.cardName.toshley, 1);
