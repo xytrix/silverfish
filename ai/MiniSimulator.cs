@@ -290,9 +290,7 @@
                     if (p.ownHero.Hp >= 1 && p.enemyHero.Hp >= 1)
                     {
                         p.value = int.MinValue;
-                        //simulateEnemysTurn(simulateTwoTurns, playaround, print, pprob, pprob2);
-                        p.prepareNextTurn(p.isOwnTurn);
-                        p.turnCounter = 1;//correcting turncoutner: because we performed turncounter++ in the firstloop, but we perform first enemy turn also in this loop
+                        // note: Playfield already prepared for next turn by startEnemyTurnSim() in doallmoves
                         Ai.Instance.enemyTurnSim[thread].simulateEnemysTurn(p, true, playaround, false, this.playaroundprob, this.playaroundprob2);
                     }
                     else
@@ -363,9 +361,7 @@
                     if (p.ownHero.Hp >= 1 && p.enemyHero.Hp>=1)
                     {
                         p.value = int.MinValue;
-                        //simulateEnemysTurn(simulateTwoTurns, playaround, print, pprob, pprob2);
-                        p.prepareNextTurn(p.isOwnTurn);
-                        p.turnCounter = 1;//correcting turncoutner: because we performed turncounter++ in the firstloop, but we perform first enemy turn also in this loop
+                        // note: Playfield already prepared for next turn by startEnemyTurnSim() in doallmoves
                         Ai.Instance.enemyTurnSim[threadnumber].simulateEnemysTurn(p, true, playaround, false, this.playaroundprob, this.playaroundprob2);
                     }
                     else
