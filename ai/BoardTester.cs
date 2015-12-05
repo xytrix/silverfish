@@ -71,6 +71,8 @@
         int enemySecretAmount = 0;
         List<SecretItem> enemySecrets = new List<SecretItem>();
 
+        List<CardDB.cardIDEnum> choiceCards = new List<CardDB.cardIDEnum>();
+
         bool ownHeroFrozen = false;
 
         List<string> ownsecretlist = new List<string>();
@@ -171,6 +173,18 @@
                     if (s.EndsWith("test "))
                     {
                         this.boardToSimulate = 1;
+                    }
+                    continue;
+                }
+
+                if (s.StartsWith("activeChoice: "))
+                {
+                    string choices = s.Replace("activeChoice: ", "");
+                    foreach (string choi in choices.Split(' '))
+                    {
+                        if (choi == "" || choi == " ") continue;
+                        //Console.WriteLine("choice "+choi);
+                        choiceCards.Add(CardDB.Instance.cardIdstringToEnum(choi));
                     }
                     continue;
                 }
@@ -671,6 +685,8 @@
                         int enemyPwordGlory = 0;//adjadmg
                         if (s.Contains(" enemyPWG(")) enemyPwordGlory = Convert.ToInt32(s.Split(new string[] { " enemyPWG(" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(')')[0]);
 
+                        int explorersHat = 0;
+                        if (s.Contains(" explht(")) explorersHat = Convert.ToInt32(s.Split(new string[] { " explht(" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(')')[0]);
 
 
 
@@ -714,6 +730,8 @@
                         tempminion.ownPowerWordGlory = ownPwordGlory;
                         tempminion.enemyPowerWordGlory = enemyPwordGlory;
                         tempminion.souloftheforest = souloftheforest;
+
+                        tempminion.explorersHat = explorersHat;
 
                         tempminion.canAttackNormal = false;
                         if (ready == true) tempminion.canAttackNormal = true;
@@ -798,6 +816,8 @@
                         int enemyPwordGlory = 0;//adjadmg
                         if (s.Contains(" enemyPWG(")) enemyPwordGlory = Convert.ToInt32(s.Split(new string[] { " enemyPWG(" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(')')[0]);
 
+                        int explorersHat = 0;
+                        if (s.Contains(" explht(")) explorersHat = Convert.ToInt32(s.Split(new string[] { " explht(" }, StringSplitOptions.RemoveEmptyEntries)[1].Split(')')[0]);
 
                         tempminion = createNewMinion(new Handmanager.Handcard(CardDB.Instance.getCardDataFromID(CardDB.Instance.cardIdstringToEnum(minionid))), zp, false);
                         tempminion.own = false;
@@ -839,6 +859,8 @@
                         tempminion.ownPowerWordGlory = ownPwordGlory;
                         tempminion.enemyPowerWordGlory = enemyPwordGlory;
                         tempminion.souloftheforest = souloftheforest;
+
+                        tempminion.explorersHat = explorersHat;
 
                         if (maxhp > hp) tempminion.wounded = true;
                         tempminion.updateReadyness();
@@ -972,7 +994,7 @@
 
             Hrtprozis.Instance.updateFatigueStats(this.ownDecksize, this.ownFatigue, this.enemyDecksize, this.enemyFatigue);
 
-            Handmanager.Instance.setHandcards(this.handcards, this.handcards.Count, enemyNumberHand);
+            Handmanager.Instance.setHandcards(this.handcards, this.handcards.Count, enemyNumberHand, this.choiceCards);
 
             Probabilitymaker.Instance.setEnemySecretData(enemySecrets);
 

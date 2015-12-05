@@ -53,6 +53,8 @@
         public Dictionary<CardDB.cardName, int> specialMinions = new Dictionary<CardDB.cardName, int>(); //minions with cardtext, but no battlecry
         Dictionary<CardDB.cardName, int> strongInspireEffectMinions = new Dictionary<CardDB.cardName, int>();
 
+        private Dictionary<CardDB.cardName, int> discoverMinions = new Dictionary<CardDB.cardName, int>();
+
 
         private static PenalityManager instance;
 
@@ -85,6 +87,7 @@
             setupSilenceTargets();
             setupTargetAbilitys();
             setupStrongInspireMinions();
+            setupDiscover();
         }
 
         public void setCombos()
@@ -937,6 +940,9 @@
             // penality if carddraw is late or you have enough cards
             int pen = 0;
             if (!cardDrawBattleCryDatabase.ContainsKey(name)) return 0;
+
+            if (discoverMinions.ContainsKey(name)) return 500;// DELETE THIS when discover is supported from bot
+
             if (name == CardDB.cardName.ancientoflore && choice != 1) return 0;
             if (name == CardDB.cardName.wrath && choice != 2) return 0;
             if (name == CardDB.cardName.nourish && choice != 2) return 0;
@@ -1755,7 +1761,7 @@
             {
                 if (m.own)
                 {
-                    if (m.handcard.card.deathrattle || m.ancestralspirit >= 1 || m.souloftheforest >= 1 || m.enemyBlessingOfWisdom >= 1) return 0;
+                    if (m.handcard.card.deathrattle || m.ancestralspirit >= 1 || m.souloftheforest >= 1 || m.enemyBlessingOfWisdom >= 1 || m.explorersHat >=1) return 0;
                     if (m.handcard.card.Charge && ((m.numAttacksThisTurn == 1 && !m.windfury) || (m.numAttacksThisTurn == 2 && m.windfury))) return 0;
                     if (m.wounded || m.Angr < m.handcard.card.Attack || (m.silenced && PenalityManager.instance.specialMinions.ContainsKey(m.name))) return 0;
 
@@ -2877,6 +2883,11 @@
 
             cardDrawBattleCryDatabase.Add(CardDB.cardName.tinkertowntechnician, 1); // if we have a mech
             cardDrawBattleCryDatabase.Add(CardDB.cardName.toshley, 1);
+
+            //discover minions
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.tracking, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.jeweledscarab, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.ancientshade, 1);
         }
 
         private void setupDiscardCards()
@@ -3582,6 +3593,13 @@
             strongInspireEffectMinions.Add(CardDB.cardName.tournamentmedic, 1);
             strongInspireEffectMinions.Add(CardDB.cardName.savagecombatant, 4);
             strongInspireEffectMinions.Add(CardDB.cardName.silverhandregent, 3);
+        }
+
+        private void setupDiscover()
+        {
+            this.discoverMinions.Add(CardDB.cardName.tracking, 1);
+            this.discoverMinions.Add(CardDB.cardName.jeweledscarab, 1);
+            this.discoverMinions.Add(CardDB.cardName.ancientshade, 1);
         }
 
     }
