@@ -940,9 +940,6 @@
             // penality if carddraw is late or you have enough cards
             int pen = 0;
             if (!cardDrawBattleCryDatabase.ContainsKey(name)) return 0;
-
-            if (discoverMinions.ContainsKey(name)) return 500;// DELETE THIS when discover is supported from bot
-
             if (name == CardDB.cardName.ancientoflore && choice != 1) return 0;
             if (name == CardDB.cardName.wrath && choice != 2) return 0;
             if (name == CardDB.cardName.nourish && choice != 2) return 0;
@@ -2712,6 +2709,12 @@
             DamageTargetDatabase.Add(CardDB.cardName.bash, 3);//combo
             DamageTargetDatabase.Add(CardDB.cardName.fireblastrank2, 3);//combo
 
+            //LOE
+            DamageAllDatabase.Add(CardDB.cardName.excavatedevil, 3);
+
+            DamageTargetDatabase.Add(CardDB.cardName.forgottentorch, 3);
+            DamageTargetDatabase.Add(CardDB.cardName.roaringtorch, 6);
+
 
         }
 
@@ -2751,6 +2754,8 @@
             this.priorityDatabase.Add(CardDB.cardName.confessorpaletress, 5);
             this.priorityDatabase.Add(CardDB.cardName.acidmaw, 5);
             this.priorityDatabase.Add(CardDB.cardName.aviana, 5);
+
+            this.priorityDatabase.Add(CardDB.cardName.brannbronzebeard, 5);
         }
 
         private void setupAttackBuff()
@@ -2788,6 +2793,8 @@
             this.attackBuffDatabase.Add(CardDB.cardName.sealofchampions, 3);
             this.attackBuffDatabase.Add(CardDB.cardName.bolster, 2);
 
+            this.attackBuffDatabase.Add(CardDB.cardName.explorershat, 1);
+
 
         }
 
@@ -2820,6 +2827,8 @@
             this.healthBuffDatabase.Add(CardDB.cardName.wildwalker, 3);
             this.healthBuffDatabase.Add(CardDB.cardName.demonfuse, 3);
             this.healthBuffDatabase.Add(CardDB.cardName.bolster, 2);
+
+            this.healthBuffDatabase.Add(CardDB.cardName.explorershat, 1);
 
             this.tauntBuffDatabase.Add(CardDB.cardName.sparringpartner, 1);
 
@@ -2888,6 +2897,7 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.tracking, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.jeweledscarab, 1);
             cardDrawBattleCryDatabase.Add(CardDB.cardName.ancientshade, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.etherealconjurer, 1);
         }
 
         private void setupDiscardCards()
@@ -3140,6 +3150,15 @@
             this.specialMinions.Add(CardDB.cardName.orgrimmaraspirant, 0);
             this.specialMinions.Add(CardDB.cardName.magnatauralpha, 0);
 
+            //LOE (week 1 and 2 :D)
+            this.specialMinions.Add(CardDB.cardName.obsidiandestroyer, 0);
+            this.specialMinions.Add(CardDB.cardName.djinniofzephyrs, 0);
+            this.specialMinions.Add(CardDB.cardName.summoningstone, 0);
+            this.specialMinions.Add(CardDB.cardName.rumblingelemental, 0);
+            this.specialMinions.Add(CardDB.cardName.tunneltrogg, 0);
+            this.specialMinions.Add(CardDB.cardName.brannbronzebeard, 0);
+
+
 
         }
 
@@ -3300,6 +3319,16 @@
             this.priorityTargets.Add(CardDB.cardName.murlocknight, 10);
             this.priorityTargets.Add(CardDB.cardName.holychampion, 5);
             this.priorityTargets.Add(CardDB.cardName.wilfredfizzlebang, 10);
+
+            //LOE
+
+            this.priorityTargets.Add(CardDB.cardName.brannbronzebeard, 10);
+            this.priorityTargets.Add(CardDB.cardName.obsidiandestroyer, 10);
+            this.priorityTargets.Add(CardDB.cardName.summoningstone, 10);
+            this.priorityTargets.Add(CardDB.cardName.djinniofzephyrs, 5);
+            this.priorityTargets.Add(CardDB.cardName.rumblingelemental, 5);
+            this.priorityTargets.Add(CardDB.cardName.animatedarmor, 5);
+
 
         }
 
@@ -3480,6 +3509,8 @@
             this.silenceTargets.Add(CardDB.cardName.magnatauralpha, 0);
 
             this.silenceTargets.Add(CardDB.cardName.anubarak, 0);
+
+            //LOE
 
 
 
