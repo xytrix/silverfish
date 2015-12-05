@@ -6691,6 +6691,7 @@
             data +="Own Handcards: "+ "\r\n";
             foreach (Handmanager.Handcard c in this.owncards)
             {
+                if (c.isChoiceTemp) continue;  // don't print fake 'discover' card
                 data +="pos " + c.position + " " + c.card.name + " " + c.getManaCost(this) + " entity " + c.entity + " " + c.card.cardIDenum + " " + c.addattack+ " " + c.addHp + "\r\n";
             }
             data += "Enemy cards: " + this.enemyAnzCards + "\r\n";
