@@ -75,6 +75,7 @@
             setupsilenceDatabase();
             setupAttackBuff();
             setupHealthBuff();
+            setupDiscover();
             setupCardDrawBattlecry();
             setupDiscardCards();
             setupDestroyOwnCards();
@@ -87,7 +88,6 @@
             setupSilenceTargets();
             setupTargetAbilitys();
             setupStrongInspireMinions();
-            setupDiscover();
         }
 
         public void setCombos()
@@ -983,7 +983,7 @@
                 if (carddraw == 0) return 15;
             }
 
-            if (name == CardDB.cardName.tinkertowntechnician)
+            if (name == CardDB.cardName.tinkertowntechnician || name == CardDB.cardName.gorillabota3)
             {
                 carddraw = (p.ownMinions.Find(m => m.handcard.card.race == TAG_RACE.MECHANICAL) != null ? 1 : 0);
                 if (carddraw == 0) return 2;
@@ -2894,10 +2894,7 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.toshley, 1);
 
             //discover minions
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.tracking, 1);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.jeweledscarab, 1);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.ancientshade, 1);
-            cardDrawBattleCryDatabase.Add(CardDB.cardName.etherealconjurer, 1);
+            foreach (CardDB.cardName discoverCard in this.discoverMinions.Keys) cardDrawBattleCryDatabase.Add(discoverCard, 1);
         }
 
         private void setupDiscardCards()
@@ -3630,7 +3627,13 @@
         {
             this.discoverMinions.Add(CardDB.cardName.tracking, 1);
             this.discoverMinions.Add(CardDB.cardName.jeweledscarab, 1);
-            this.discoverMinions.Add(CardDB.cardName.ancientshade, 1);
+            this.discoverMinions.Add(CardDB.cardName.darkpeddler, 1);
+            this.discoverMinions.Add(CardDB.cardName.tombspider, 1);
+            this.discoverMinions.Add(CardDB.cardName.gorillabota3, 1);  // only if you have a mech
+            this.discoverMinions.Add(CardDB.cardName.etherealconjurer, 1);
+            this.discoverMinions.Add(CardDB.cardName.museumcurator, 1);
+            this.discoverMinions.Add(CardDB.cardName.ravenidol, 1);
+            this.discoverMinions.Add(CardDB.cardName.archthiefrafaam, 1);
         }
 
     }
