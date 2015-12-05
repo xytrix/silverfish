@@ -4303,7 +4303,7 @@
                 }
                 if (own && m.name == CardDB.cardName.rumblingelemental && c.type == CardDB.cardtype.MOB && c.battlecry==true)
                 {
-                    this.doDmgToRandomEnemyCLIENT(2, true, !own);
+                    this.doDmgToRandomEnemyCLIENT(2, true, own);
                 }
             }
 
@@ -4326,7 +4326,7 @@
                 }
                 if (!own && m.name == CardDB.cardName.rumblingelemental && c.type == CardDB.cardtype.MOB && c.battlecry == true)
                 {
-                    this.doDmgToRandomEnemyCLIENT(2, true, !own);
+                    this.doDmgToRandomEnemyCLIENT(2, true, own);
                 }
             }
 
