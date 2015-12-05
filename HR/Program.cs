@@ -154,7 +154,6 @@ namespace HREngine.Bots
             writeSettings();
 
             this.doMultipleThingsAtATime = Settings.Instance.speedy;
-            this.doMultipleThingsAtATime = false; // for easier debugging+bug fixing in the first weeks after update
         }
 
         /// <summary>
