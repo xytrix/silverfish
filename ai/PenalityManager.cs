@@ -1450,7 +1450,7 @@
                     return 50;
                 }
 
-                if (m.Angr >= 4 || m.Hp >= 5)
+                if (m.Angr >= 5 || m.Hp >= 5)
                 {
                     pen = 0; // so we dont destroy cheap ones :D
                 }
@@ -1459,7 +1459,7 @@
                     pen = 30;
                 }
 
-
+                if (this.cardDrawBattleCryDatabase.ContainsKey(m.name)) pen += 10 * this.cardDrawBattleCryDatabase[m.name];
             }
 
             return pen;
