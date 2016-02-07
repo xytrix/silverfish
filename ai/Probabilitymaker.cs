@@ -698,7 +698,6 @@
             int cardsremaining = this.anzCardsInDeck(cardid);
             if (cardsremaining == 0) return 0;
 
-            // must include all cards previously seen in our calculation
             foreach (CardDB.cardIDEnum playedcard in this.enemyCardsPlayed.Keys)
             {
                 handsize += this.enemyCardsPlayed[playedcard];

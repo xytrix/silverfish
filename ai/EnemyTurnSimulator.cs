@@ -42,6 +42,22 @@
             List<Playfield> temp = new List<Playfield>();
             int deep = 0;
 
+            //get rid of cursed! ?
+            if (posmoves[0].anzEnemyCursed >= 1)
+            {
+                int curseds = posmoves[0].anzEnemyCursed;
+
+                for (int ii = curseds; ii > 0; ii--)
+                {
+                    if (rootfield.mana >= 2)
+                    {
+                        rootfield.mana -= 2;
+                        posmoves[0].anzEnemyCursed--;
+                    }
+                }
+            }
+
+
             //playing aoe-effects if activated (and we didnt play loatheb)
             if (playaround && rootfield.ownloatheb == 0)
             {
@@ -266,6 +282,7 @@
                 p.triggerCardsChanged(false);
             }
             
+
             //if warrior, equip a weapon
             if (p.enemyHeroName == HeroEnum.warrior && p.enemyWeaponDurability == 0 && p.mana >= 4)
             {

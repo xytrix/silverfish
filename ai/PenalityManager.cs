@@ -2927,6 +2927,11 @@
             cardDrawBattleCryDatabase.Add(CardDB.cardName.tinkertowntechnician, 1); // if we have a mech
             cardDrawBattleCryDatabase.Add(CardDB.cardName.toshley, 1);
 
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.maptothegoldenmonkey, 1);
+            cardDrawBattleCryDatabase.Add(CardDB.cardName.goldenmonkey, 1); //no carddraw, but new cards
+
+
+
             //add discover minions
             foreach (CardDB.cardName discoverCard in this.discoverMinions.Keys)
             {
@@ -3642,6 +3647,8 @@
             this.TargetAbilitysDatabase.Add(CardDB.cardName.ballistashot, 1);
             this.TargetAbilitysDatabase.Add(CardDB.cardName.fireblastrank2, 1);
             this.TargetAbilitysDatabase.Add(CardDB.cardName.heal, 1);
+
+
         }
 
         private void setupStrongInspireMinions()

@@ -149,6 +149,9 @@
         public int selectedChoice = -1;
         public int anzownNagaSeaWitch = 0;
         public int anzenemyNagaSeaWitch = 0;
+        public int anzOwnAnimatedArmor = 0;
+        public int anzEnemyAnimatedArmor = 0;
+        public int anzEnemyCursed = 0;
         //############################
 
         public int tempanzOwnCards = 0; // for Goblin Sapper
@@ -419,6 +422,8 @@
             this.ownDeckSize = Hrtprozis.Instance.ownDeckSize;
             this.enemyDeckSize = Hrtprozis.Instance.enemyDeckSize;
 
+            this.anzEnemyCursed = Hrtprozis.Instance.enemyCursedCardsinHand;
+
 
             this.selectedChoice = -1;
 
@@ -453,6 +458,9 @@
             anzEnemyMaidenOfTheLake = 0;
             anzOwnBranns = 0;
             anzEnemyBranns = 0;
+
+            anzOwnAnimatedArmor = 0;
+            anzEnemyAnimatedArmor = 0;
 
             this.spellpower = 0;
             this.enemyspellpower = 0;
@@ -535,6 +543,8 @@
                 if (m.name == CardDB.cardName.fallenhero) this.anzOwnFallenHeros++;
 
                 if (m.name == CardDB.cardName.brannbronzebeard) this.anzOwnBranns++;
+
+                if (m.name == CardDB.cardName.animatedarmor) this.anzOwnAnimatedArmor++;
 
                 if (m.name == CardDB.cardName.sorcerersapprentice)
                 {
@@ -627,6 +637,8 @@
                 if (m.name == CardDB.cardName.fallenhero) this.anzEnemyFallenHeros++;
 
                 if (m.name == CardDB.cardName.brannbronzebeard) this.anzEnemyBranns++;
+
+                if (m.name == CardDB.cardName.animatedarmor) this.anzEnemyAnimatedArmor++;
 
                 if (m.name == CardDB.cardName.sorcerersapprentice)
                 {
@@ -776,6 +788,8 @@
             this.needGraveyard = p.needGraveyard;
             if (p.needGraveyard) this.diedMinions = new List<GraveYardItem>(p.diedMinions);
 
+            this.anzEnemyCursed = p.anzEnemyCursed;
+
             //####buffs#############################
 
             this.anzOwnRaidleader = p.anzOwnRaidleader;
@@ -851,7 +865,8 @@
 
             this.anzownNagaSeaWitch = p.anzownNagaSeaWitch;
             this.anzenemyNagaSeaWitch = p.anzenemyNagaSeaWitch;
-
+            this.anzOwnAnimatedArmor = p.anzOwnAnimatedArmor ;
+            this.anzEnemyAnimatedArmor = p.anzEnemyAnimatedArmor;
             //#########################################
 
             this.selectedChoice = p.selectedChoice;
@@ -2404,7 +2419,7 @@
                 {
                     m.numAttacksThisTurn = 0;
                     m.playedThisTurn = false;
-                    m.updateReadyness();
+                    m.updateReadyness(this);
                     m.canAttackNormal = false;
                     if (m.concedal)
                     {
@@ -2451,7 +2466,7 @@
                     //m.immune = true;
                     m.numAttacksThisTurn = 0;
                     m.playedThisTurn = false;
-                    m.updateReadyness();
+                    m.updateReadyness(this);
                     m.canAttackNormal = false;
                     if (m.concedal)
                     {
@@ -2812,7 +2827,7 @@
                                 attacker.frozen = true;
                             }
 
-                            this.triggerAMinionDealedDmg(defender, oldhp - attacker.Hp);
+                            this.triggerAMinionDealedDmg(defender, oldhp - attacker.Hp, enem_attack);
                         }
                     }
                 }
@@ -2851,7 +2866,7 @@
 
                     if (attacker.handcard.card.name == CardDB.cardName.waterelemental || attacker.handcard.card.name == CardDB.cardName.snowchugger) defender.frozen = true;
 
-                    this.triggerAMinionDealedDmg(attacker, oldhp - defender.Hp);
+                    this.triggerAMinionDealedDmg(attacker, oldhp - defender.Hp, attackerAngr);
                 }
                 doDmgTriggers();
                 return;
@@ -2877,7 +2892,7 @@
                 {
                    if(defender.handcard.card.name == CardDB.cardName.waterelemental || defender.handcard.card.name == CardDB.cardName.snowchugger) attacker.frozen = true;
 
-                   this.triggerAMinionDealedDmg(defender, oldHP - attacker.Hp);
+                   this.triggerAMinionDealedDmg(defender, oldHP - attacker.Hp, defAngr);
                 }
                 attackerGotDmg = oldHP > attacker.Hp;
             }
@@ -3323,7 +3338,7 @@
                         if (m.playedThisTurn && m.name == CardDB.cardName.southseadeckhand)
                         {
                             m.charge--;
-                            m.updateReadyness();
+                            m.updateReadyness(this);
                         }
                     }
                     this.ownHero.updateReadyness();
@@ -3927,6 +3942,11 @@
                     summonOwn += this.tempTrigger.enemyMinionsDied;
                 }
 
+                if (mnn.handcard.card.name == CardDB.cardName.eeriestatue)
+                {
+                    mnn.updateReadyness(this);
+                }
+
             }
             foreach (Minion mnn in this.enemyMinions)
             {
@@ -4019,6 +4039,11 @@
                 {
                     summonEnemy += this.tempTrigger.ownMinionsDied;
                 }
+
+                if (mnn.handcard.card.name == CardDB.cardName.eeriestatue)
+                {
+                    mnn.updateReadyness(this);
+                }
             }
 
             foreach (Handmanager.Handcard hc in this.owncards)
@@ -4088,7 +4113,7 @@
 
         }
 
-        public void triggerAMinionDealedDmg(Minion m, int dmgDone)
+        public void triggerAMinionDealedDmg(Minion m, int dmgDone, int attackvalue)
         {
             //only GVG_018 has such an trigger!
             if (m.name == CardDB.cardName.mistressofpain && dmgDone >= 1)
@@ -4101,7 +4126,7 @@
                     }
                     else
                     {
-                        this.minionGetDamageOrHeal(this.ownHero, -dmgDone);
+                        this.minionGetDamageOrHeal(this.ownHero, -attackvalue);
                     }
                 }
                 else
@@ -4112,7 +4137,7 @@
                     }
                     else
                     {
-                        this.minionGetDamageOrHeal(this.enemyHero, -dmgDone);
+                        this.minionGetDamageOrHeal(this.enemyHero, -attackvalue);
                     }
                 }
             }
@@ -4148,6 +4173,9 @@
                     this.minionGetBuffed(target, 1, 1);
                 }
 
+                int summonstones = 0;
+                Minion summoningStone = null;
+
                 foreach (Minion m in this.ownMinions)
                 {
                     if (m.silenced) continue;
@@ -4176,7 +4204,19 @@
                         continue;
                     }
 
+                    if (own && m.name == CardDB.cardName.summoningstone)
+                    {
+                        summonstones++;
+                        summoningStone = m;
+                        continue;
+                    }
+
                     m.handcard.card.sim_card.onCardIsGoingToBePlayed(this, hc.card, own, m, target, choice);
+                }
+
+                for (int i = 0; i < summonstones; i++)
+                {
+                    summoningStone.handcard.card.sim_card.onCardIsGoingToBePlayed(this, hc.card, own, summoningStone, target, choice);
                 }
 
                 foreach (Minion m in this.enemyMinions)
@@ -4222,6 +4262,9 @@
                     this.minionGetBuffed(target, 1, 1);
                 }
 
+                int summonstones = 0;
+                Minion summoningStone = null;
+
                 foreach (Minion m in this.enemyMinions)
                 {
                     if (m.silenced) continue;
@@ -4248,8 +4291,22 @@
                         continue;
                     }
 
+                    if (!own && m.name == CardDB.cardName.summoningstone)
+                    {
+                        summonstones++;
+                        summoningStone = m;
+                        continue;
+                    }
+
+
                     m.handcard.card.sim_card.onCardIsGoingToBePlayed(this, hc.card, own, m, target, choice);
                 }
+
+                for (int i = 0; i < summonstones; i++)
+                {
+                    summoningStone.handcard.card.sim_card.onCardIsGoingToBePlayed(this, hc.card, own, summoningStone, target, choice);
+                }
+
                 foreach (Minion m in this.ownMinions)
                 {
                     if (m.name == CardDB.cardName.troggzortheearthinator)
@@ -4412,6 +4469,12 @@
                     {
                         m.handcard.card.sim_card.onMinionWasSummoned(this, m, mnn);
                     }
+
+                    if (m.handcard.card.name == CardDB.cardName.eeriestatue)
+                    {
+                        m.updateReadyness(this);
+                    }
+
                 }
             }
             else
@@ -4422,6 +4485,11 @@
                     if (m.name == CardDB.cardName.knifejuggler)
                     {
                         m.handcard.card.sim_card.onMinionWasSummoned(this, m, mnn);
+                    }
+
+                    if (m.handcard.card.name == CardDB.cardName.eeriestatue)
+                    {
+                        m.updateReadyness(this);
                     }
                 }
             }
@@ -4557,7 +4625,7 @@
             {
                 m.playedThisTurn = false;
                 m.numAttacksThisTurn = 0;
-                m.updateReadyness();
+                m.updateReadyness(this);
                 if (!m.silenced)
                 {
                     if (m.name == CardDB.cardName.mimironshead)
@@ -4587,6 +4655,22 @@
                 }
                 if (ownturn == m.own && m.destroyOnOwnTurnStart) this.minionGetDestroyed(m);
                 if (ownturn != m.own && m.destroyOnEnemyTurnStart) this.minionGetDestroyed(m);
+            }
+
+            //cursed-card effect
+            if (ownturn)
+            {
+                foreach (Handmanager.Handcard hc in this.owncards)
+                {
+                    if (hc.card.cardIDenum == CardDB.cardIDEnum.LOE_007t)
+                    {
+                        this.minionGetDamageOrHeal(this.ownHero, 2, true);
+                    }
+                }
+            }
+            else
+            {
+                if(this.anzEnemyCursed>=1)this.minionGetDamageOrHeal(this.enemyHero, 2 * this.anzEnemyCursed, true);
             }
 
             this.doDmgTriggers();
@@ -5519,7 +5603,7 @@
             m.stealth = hc.card.Stealth;
             m.spellpower = 0; //we set this value in onAuraStarts!
 
-            m.updateReadyness();
+            m.updateReadyness(this);
 
             if (m.name == CardDB.cardName.lightspawn)
             {
@@ -5645,7 +5729,6 @@
         }
 
 
-        //todo 4th param
         public void callKid(CardDB.Card c, int zonepos, bool own, bool spawnKid = false, bool oneMoreIsAllowed = false)
         {
             //spawnKid = true if its a minion spawned with another one (battlecry)
@@ -6100,7 +6183,7 @@
             {
                 this.minionGetCharge(m);
             }
-            m.updateReadyness();
+            m.updateReadyness(this);
 
         }
 
@@ -6110,14 +6193,14 @@
         {
             if (m.windfury) return;
             m.windfury = true;
-            m.updateReadyness();
+            m.updateReadyness(this);
         }
 
         public void minionGetCharge(Minion m)
         {
             this.minionGetOrEraseAllAreaBuffs(m, false);//because of warsong commander
             m.charge++;
-            m.updateReadyness();
+            m.updateReadyness(this);
             this.minionGetOrEraseAllAreaBuffs(m, true);
         }
 
@@ -6125,7 +6208,7 @@
         {
             this.minionGetOrEraseAllAreaBuffs(m, false);//because of warsong commander
             m.charge--;
-            m.updateReadyness();
+            m.updateReadyness(this);
             this.minionGetOrEraseAllAreaBuffs(m, true);
         }
 
