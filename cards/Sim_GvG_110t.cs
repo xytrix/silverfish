@@ -21,10 +21,8 @@ namespace HREngine.Bots
                 return;
             }
 
-            List<Minion> temp = (m.own ? p.enemyMinions : p.ownMinions);
-            int dmg = (m.own ? 2 : 3);  // not exactly best/worse case scenario damage, but above average-case
-            Minion target = p.searchRandomMinionForDamage(temp, dmg, m.own, true);  // will pick a best/worst-case scenario minion however
-            p.minionGetDamageOrHeal(target, dmg);
+            int dmg = (m.own ? 2 : 3);
+            p.doDmgToRandomEnemyCLIENT(dmg, true, m.own);
 
         }
 

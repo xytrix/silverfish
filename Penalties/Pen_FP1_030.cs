@@ -19,7 +19,7 @@ namespace HREngine.Bots
                 if (p.enemyMinions.Count == 0) penalty += 5;
             }
 
-			return penalty;
-		}
-	}
+            return penalty;
+        }
+    }
 }

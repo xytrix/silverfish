@@ -11,6 +11,7 @@ namespace HREngine.Bots
             if (p.enemyMinions.Count == 0)
                 return 20;
 
+
             return 0;
 		}
 	}

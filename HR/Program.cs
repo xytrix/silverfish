@@ -631,7 +631,8 @@ namespace HREngine.Bots
             }
             catch (Exception Exception)
             {
-                Helpfunctions.Instance.ErrorLog(Exception.ToString());
+                Helpfunctions.Instance.logg("StackTrace ---" + Exception.ToString());
+                Helpfunctions.Instance.ErrorLog("StackTrace ---" + Exception.ToString());
                 if (Settings.Instance.learnmode)
                 {
                     e.action_list.Clear();
@@ -1085,7 +1086,7 @@ namespace HREngine.Bots
 
     public class Silverfish
     {
-        public string versionnumber = "117.04";
+        public string versionnumber = "117.1";
         private bool singleLog = false;
         private string botbehave = "rush";
         public bool waitingForSilver = false;

@@ -9,7 +9,7 @@ namespace HREngine.Bots
 
         //    Battlecry: If you have a Mech, deal 4 damage randomly split among all enemies.
 
-        public override void  getBattlecryEffect(Playfield p, Minion own, Minion target, int choice)
+        public override void getBattlecryEffect(Playfield p, Minion own, Minion target, int choice)
         {
 
             // conservative/realistic
@@ -60,7 +60,6 @@ namespace HREngine.Bots
                 i++;
             }
         }
-
 
     }
 

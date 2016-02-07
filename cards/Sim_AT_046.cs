@@ -11,13 +11,14 @@ namespace HREngine.Bots
         CardDB.Card kid = CardDB.Instance.getCardDataFromID(CardDB.cardIDEnum.CS2_050);//searing
         public override void getBattlecryEffect(Playfield p, Minion own, Minion target, int choice)
         {
+            int pos = own.zonepos;
             if (p.isServer)
             {
                 //TODO
-                p.callKid(kid, own.zonepos, own.own, true);
+                p.callKid(kid, pos, own.own, true);
                 return;
             }
-            p.callKid(kid, own.zonepos, own.own, true);
+            p.callKid(kid, pos, own.own, true);
         }
 
 

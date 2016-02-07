@@ -88,7 +88,7 @@ namespace HREngine.Bots
                     usecoin = 2;
                 }
             }
-            if (usecoin>=1 && useAbili && p.ownMaxMana <= 2) retval -= 40;
+            if (usecoin >= 1 && useAbili && p.ownMaxMana <= 2) retval -= 40;
             if (usecoin >= 1 && p.manaTurnEnd >= usecoin && p.owncards.Count <= 8) retval -= 100 * p.manaTurnEnd;
             int heropowermana = p.ownHeroAblility.card.getManaCost(p, 2);
 

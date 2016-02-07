@@ -13,13 +13,14 @@ namespace HREngine.Bots
 
         public override void onCardPlay(Playfield p, bool ownplay, Minion target, int choice)
         {
+
             int pos = (ownplay) ? p.ownMinions.Count : p.enemyMinions.Count;
             p.callKid(kid, pos, ownplay, false);
 
             for (int i = 0; i < 2; i++)
             {
                 pos = (ownplay) ? p.ownMinions.Count : p.enemyMinions.Count;
-                p.callKid(kid, pos+1, ownplay, true);  // spawnkid
+                p.callKid(kid, pos + 1, ownplay, true);  // spawnkid
             }
             p.equipWeapon(w, ownplay);
         }

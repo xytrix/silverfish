@@ -20,9 +20,7 @@ namespace HREngine.Bots
                     return;
                 }
 
-                List<Minion> temp = (triggerEffectMinion.own ? p.enemyMinions : p.ownMinions);
-                Minion m = p.searchRandomMinionForDamage(temp, 2, triggerEffectMinion.own, true);
-                p.minionGetDamageOrHeal(m, 2);
+                p.doDmgToRandomEnemyCLIENT(2, true, triggerEffectMinion.own);
             }
         }
 

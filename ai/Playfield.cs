@@ -2176,7 +2176,7 @@
                     // assume enemy kills our lowest mana cost minion, and we get a vanilla drop of manacost-1
                     List<Minion> temp = new List<Minion>(this.ownMinions);
                     temp.Sort((a, b) => a.handcard.card.cost.CompareTo(b.handcard.card.cost));
-                    
+
                     int cardCost = Math.Min(8, Math.Max(temp[0].handcard.card.cost - 1, 0));  // min cost 0 (wisp), max cost 8 (giants, etc)
                     this.evaluatePenality -= cardCost * 3;  // value as if we played a vanilla minion of the same cost (i.e. 2*atk + hp, but atk==hp)
                 }
@@ -4493,7 +4493,6 @@
         public void triggerStartTurn(bool ownturn)
         {
             this.numPlayerMinionsAtTurnStart = this.ownMinions.Count;
-
             if (ownturn)
             {
                 int at073 = 0;
@@ -5283,7 +5282,6 @@
 
                         if ((!m.silenced && (m.handcard.card.name == CardDB.cardName.cairnebloodhoof || m.handcard.card.name == CardDB.cardName.harvestgolem)) || m.ancestralspirit >= 1)
                         {
-                            // may be peforming actions without a botbase (i.e. run external)
                             if (Ai.Instance.botBase != null) this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
                         }
                     }
@@ -5671,8 +5669,8 @@
                     return;
                 }
             }
-            int mobplace = (spawnKid ? zonepos : zonepos + 1);//todo check this?
-
+            //int mobplace = zonepos + 1;//todo check this?
+            int mobplace = (spawnKid ? zonepos : zonepos + 1);
             //create minion (+triggers)
             Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity() };
             Minion m = createNewMinion(hc, mobplace, own);
@@ -6039,11 +6037,10 @@
         {
             m.endAura(this);
 
-            Handmanager.Handcard hc = new Handmanager.Handcard(c) { entity = this.getNextEntity() };
+            Handmanager.Handcard hc = new Handmanager.Handcard(c){ entity = this.getNextEntity() }; // m.entityID;
             int ancestral = m.ancestralspirit;
             if (m.handcard.card.name == CardDB.cardName.cairnebloodhoof || m.handcard.card.name == CardDB.cardName.harvestgolem || ancestral >= 1)
             {
-                // may be peforming actions without a botbase (i.e. run external)
                 if (Ai.Instance.botBase != null) this.evaluatePenality -= Ai.Instance.botBase.getEnemyMinionValue(m, this) - 1;
             }
 

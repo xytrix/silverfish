@@ -64,7 +64,7 @@ namespace HREngine.Bots
             
             //RR card draw value depending on the turn and distance to lethal
             //RR if lethal is close, carddraw value is increased
-            if (p.turnCounter == 0 && Ai.Instance.lethalMissing <= 5) //RR
+            if (Ai.Instance.lethalMissing <= 5 && p.turnCounter ==0) //RR
             {
                 retval += p.owncarddraw * 100;
             }
@@ -86,11 +86,16 @@ namespace HREngine.Bots
             int ownMinionsCount = 0;
 
             bool enemyhaspatron = false;
-            bool canPingMinions = (p.ownHeroName == HeroEnum.mage);
+
+            //
+            bool canPingMinions = (p.ownHeroAblility.card.name == CardDB.cardName.fireblast);
             bool hasPingedMinion = false;
+
 
             foreach (Minion m in p.enemyMinions)
             {
+                if (m.name == CardDB.cardName.grimpatron && !m.silenced) enemyhaspatron = true;
+
                 int currMinionValue = this.getEnemyMinionValue(m, p);
 
                 // Give a bonus for 1 hp minions as a mage, since we can remove it easier in the future with ping.
@@ -108,7 +113,7 @@ namespace HREngine.Bots
                 }
 
                 retval -= currMinionValue;
-                if (m.name == CardDB.cardName.grimpatron && !m.silenced) enemyhaspatron = true;
+
                 //hasTank = hasTank || m.taunt;
             }
 
@@ -191,7 +196,7 @@ namespace HREngine.Bots
                 if (!(p.ownHeroName == HeroEnum.thief && (p.ownWeaponDurability >= 2 || p.ownWeaponAttack >= 2))) retval -= 20;
                 if (p.ownHeroName == HeroEnum.pala && enemyhaspatron) retval += 20;
             }
-            if (useAbili && usecoin == 2) retval -= 5;  // prevent being wasteful with innervate if we could've just not used hero power for 2mana
+            if (useAbili && usecoin == 2) retval -= 5;
             //if (usecoin && p.manaTurnEnd >= 1 && p.owncards.Count <= 8) retval -= 100;
 
             int mobsInHand = 0;
@@ -259,6 +264,7 @@ namespace HREngine.Bots
                     retval += 50;//10000
                     if (p.numPlayerMinionsAtTurnStart == 0) retval += 50; // if we can kill the enemy even after a board clear, bigger bonus
                     if (p.loathebLastTurn > 0) retval += 50;  // give a bonus to turn 2 sims where we played loatheb in turn 1 to protect our lethal board
+
                 }
             }
             else if (p.ownHero.Hp > 0)
@@ -266,6 +272,7 @@ namespace HREngine.Bots
                 // if our damage on board is lethal, give a strong bonus so enemy AI avoids this outcome in its turn (i.e. AI will clear our minions if it can instead of ignoring them)
                 if (p.turnCounter == 1 && p.guessHeroDamage(true) >= p.enemyHero.Hp + p.enemyHero.armor) retval += 100;
             }
+
 
             //soulfire etc
             int deletecardsAtLast = 0;

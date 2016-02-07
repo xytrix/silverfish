@@ -302,7 +302,9 @@
                 }
                 catch (Exception ex)
                 {
-                    Helpfunctions.Instance.logg("StackTrace ---" + ex.ToString());
+                    Helpfunctions.Instance.logg("StackTrace do next calced move---" + ex.ToString());
+                    Helpfunctions.Instance.ErrorLog("StackTrace do next calced move---" + ex.ToString());
+
                 }
                 Helpfunctions.Instance.logg("nmgsime-");
 
